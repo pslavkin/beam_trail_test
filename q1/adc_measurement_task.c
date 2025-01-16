@@ -29,7 +29,7 @@ static const struct settings_t settings[] = {
 static void coloredPrint(uint8_t i, uint32_t ticks)
 {
 #define BASE_COLOR 1
-   printf("\033[38;5;%um%u @ %u[ms]\r\n",2*i+BASE_COLOR,i,ticks);
+   printf("\033[38;5;%um%u @ %08u[ms]\r\n",i+BASE_COLOR,i,ticks);
 }
 
 static void incTicks(void)

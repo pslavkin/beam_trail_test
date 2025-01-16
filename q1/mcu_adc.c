@@ -6,9 +6,9 @@
 
 uint16_t MCU_ADC_GetAdcData(channel_t channel)
 {
-   uint16_t value = channel*20+2; //fake value
+   uint16_t value =  rand() & 0x0FFF ; //12b adc random values
    //debug print
-   printf("     MCU_ADC ch: %u value: %u\r\n",channel, value);
+   printf("     MCU_ADC ch: %u value: %05u\r\n",channel, value);
    return value;
 }
 

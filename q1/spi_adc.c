@@ -6,9 +6,9 @@
 
 uint32_t SPI_ADC_GetAdcData(channel_t channel)
 {
-   uint32_t value = channel*10+1; //fake value
+   uint32_t value =  rand() & 0xFFFFFFFF ; //32b adc random values
    //debug print
-   printf("     SPI_ADC ch: %u value: %u\r\n",channel, value);
+   printf("     SPI_ADC ch: %u value: %10u\r\n",channel, value);
    return value;
 }
 
