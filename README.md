@@ -86,9 +86,60 @@ cons:
     reduce some of the problems
 
 #### B 
+
 Is it a valid declaration on a machine which is not 16 bit?
 Give an explanation. Propose proper declaration. 
+
 ```
-    unsigned int null = 0; 
-    unsigned int complement2zero_by_ones = 0xFFFF; // 1′ s complement to zero
+a)    unsigned int null = 0; 
 ```
+
+the declaration is valid in any arch, the 0 is guaranteed to be the same
+size of the unsigned int, so if the unsigned int is 16b, the 0 will be 16b
+if the unsigned int is 32b, the 0 will be 32b, and so on.
+
+```
+b)    unsigned int complement2zero_by_ones = 0xFFFF; // 1′ s complement to zero
+```
+
+1's complement to zero is obtained by inverting all the bits of the number
+if the machine is not 16b, so it could be 8 or >=32b.
+the unsigned int is (generally) 32b so inverting all bits of zero in a 32b
+arch is 0xFFFFFFFF.
+if the arch is 8b, the unsigned int could be 16b, and in that case the
+original declaration could works, but depends also on the compiler
+
+a better approach could be to decleare as
+
+```
+    unsigned int complement2zero_by_ones = ~0; // 1′ s complement to zero toogling all bits of 0 in any arch
+```
+
+### C
+
+<p align="center">
+<img src="../q3/q3_c.jpg" width=700 title="what does the code do">
+</p>
+
+in 32b arch (generally) sizeof(long int) is 64b (8bytes)  and sizeof(unsigned
+int) is 32b (4bytes)
+
+
+In C the signed integers are converted to unsigned integers when comparing
+signed vs unsigned, so the comparison is done in the unsigned domain. a = -1 as
+long int is 64b in 32b arch, so a = 0xFFFF FFFF FFFF FFFF in unsigned domain
+that is 'a bit' greater than b so the comparison a>b is true and puts 'a' is
+called
+
+so it will print 
+```
+8
+4
+a
+```
+
+
+
+
+
+
