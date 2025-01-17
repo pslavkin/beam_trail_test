@@ -8,7 +8,6 @@ CC		= gcc
 CFLAGS	= -Wall -g
 LDFLAGS = -lm
 
-
 ifeq (MCU, $(ADC_IFACE))
 	CFLAGS += -DMCU_ADC
 	SRC += mcu_adc.c
@@ -19,7 +18,6 @@ else ifeq (SPI, $(ADC_IFACE))
 	BIN = adcSpi.out
 else
 endif
-
 
 show:
 	@echo "Please specify the ADC interface to be used"

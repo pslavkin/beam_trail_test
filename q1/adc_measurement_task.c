@@ -39,8 +39,43 @@ static void incTicks(void)
 
 static bool compareTicks(uint32_t periodMs)
 {
+   //just compare using the modulo operator
    return (ticks % periodMs) == 0;
 }
+
+//choose btw adc/spi and get the adc value in the expected format NONE blocking
+#ifdef MCU_ADC
+static uint32_t rawAdcToMv(uint16_t adcValue)
+{
+   //3.3v reference, 12b resolution and 0-3v input range
+   //the requeriments is to measure 3v in mV => (adc * 3300)/2^12
+   //to avoid floats I could do adc@16b * 3300@16b fits in 32b
+   //and then divide it by 2^12 (shift right 12 positions)
+   return ((uint32_t)adcValue * 3300 ) >> 12;
+}
+static uint32_t readVoltageMv( channel_t ch )
+{
+   uint16_t rawAdcValue = MCU_ADC_GetAdcData(ch);
+   return rawAdcToMv(rawAdcValue);
+}
+
+#elif SPI_ADC
+static uint32_t rawAdcToMv(uint32_t adcValue)
+{
+   //5v reference, 32b resolution!!! and 0-3v input range
+   //1b= 5v/2^32 = 1.1920928955nV (I'd like to see that in action!)
+   //the requeriments is to measure 3v in mV, so a lot of bits could be
+   //discarded so I could divide instead of multiply
+   //2^32/x = 5000 => x = 2^32/5000 = 858993.4594 ~= 858993 to avoid floats
+
+   return adcValue / 858993;
+}
+static uint32_t readVoltageMv( channel_t ch )
+{
+   uint32_t rawAdcValue = SPI_ADC_GetAdcData(ch);
+   return rawAdcToMv(rawAdcValue);
+}
+#endif
 
 //public api
 void AdcMeasurementTask_Init(void)
@@ -50,20 +85,17 @@ void AdcMeasurementTask_Init(void)
 
 void AdcMeasurementTask ( void ) 
 {
-   uint8_t i; //255 enought for 4 channels
+   uint8_t  i; //255 enought for 4 channels
+   uint32_t voltageMv;
 
    for(i = 0; i < (sizeof(settings)/sizeof(settings[0])); i++) {
       if( compareTicks(settings[i].periodMs )) {
          //debug log
          coloredPrint(i,ticks);
-         //choose btw adc/spi and get the adc value in the expected format NONE blocking
-#ifdef MCU_ADC
-         uint16_t adcValue = MCU_ADC_GetAdcData(settings[i].ch);
-#elif SPI_ADC
-         uint32_t adcValue = SPI_ADC_GetAdcData(settings[i].ch);
-#endif
+         //get the voltage converted from adc value
+         voltageMv = readVoltageMv(settings[i].ch);
          //send the voltage value to the TCP server NONE blocking
-         SendVoltage(settings[i].voltageType ,adcValue);
+         SendVoltage ( settings[i].voltageType ,voltageMv );
       }
    }
    incTicks();

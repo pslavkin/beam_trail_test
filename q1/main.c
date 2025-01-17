@@ -1,18 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <stdint.h>
 #include <stdbool.h>
 #include "adc_measurement_task.h"
-#include <time.h>
 
 #define ADC_TASK_TIME_PERIOD_MS 10 // 100 I'm using 10ms to speed up the example, but it must be 100 as per requirements
-int main(void)
+int main ( void )
 {
    AdcMeasurementTask_Init ( );
    while (true) {
-      AdcMeasurementTask (          );
-      usleep             ( ADC_TASK_TIME_PERIOD_MS*1000 ); //100ms delay. NOTE: no a absolute timer, just a delay for the sake of the example
+      AdcMeasurementTask ( );
+      usleep ( ADC_TASK_TIME_PERIOD_MS*1000 ); //100ms delay. NOTE: no a absolute timer, just a delay for the sake of the example
    }
    return 0;
 }
