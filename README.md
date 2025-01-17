@@ -7,7 +7,7 @@ I also shows the timing of each adc channel capture.
 link to the code repo: [Q1 task code](https://github.com/pslavkin/beam_trail_test/tree/main/q1)
 
 <p align="center">
-  <img src="../q1/q1_demo.gif" title="Q1 task demo">
+  <img src="./q1/q1_demo.gif" title="Q1 task demo">
 </p>
 
 
@@ -34,7 +34,7 @@ cons:
 
 
 <p align="center">
-  <img src="../q2/vcc_to_led.png" title="vcc to led option">
+  <img src="./q2/vcc_to_led.png" title="vcc to led option">
 </p>
 
 #### led to gnd option
@@ -54,7 +54,7 @@ cons:
   current, this led will decrease the total current available for the other pins
 
 <p align="center">
-  <img src="../q2/led_to_gnd.png" title="led to gnd option">
+  <img src="./q2/led_to_gnd.png" title="led to gnd option">
 </p>
 
 
@@ -118,7 +118,7 @@ a better approach could be to decleare as
 ### C
 
 <p align="center">
-<img src="../q3/q3_c.jpg" width=700 title="what does the code do">
+    <img src="./q3/q3_c.jpg" width=700 title="what does the code do">
 </p>
 
 in 32b arch (generally) sizeof(long int) is 64b (8bytes)  and sizeof(unsigned
