@@ -58,9 +58,9 @@ cons:
 </p>
 
 
-## Q3 - Dynamic memory allocation in embedded systems
+## Q3 - C/C++ embedded questions
 
-#### A 
+#### A - dynamic memory in embedded 
     One of the main reasons to avoid dynamic memory allocation in embedded
     systems is that it's hard to predict the behavior of the system when the
     memory is fragmented and the system is running out of memory, or 'cause a
@@ -85,7 +85,7 @@ cons:
     There is also other dynamic memory allocation strategies like grids that
     reduce some of the problems
 
-#### B 
+#### B - 1's complement
 
 Is it a valid declaration on a machine which is not 16 bit?
 Give an explanation. Propose proper declaration. 
@@ -105,7 +105,7 @@ b)    unsigned int complement2zero_by_ones = 0xFFFF; // 1′ s complement to zer
 1's complement to zero is obtained by inverting all the bits of the number
 if the machine is not 16b, so it could be 8 or >=32b.
 the unsigned int is (generally) 32b so inverting all bits of zero in a 32b
-arch is 0xFFFFFFFF.
+arch is 0x **FFFF** FFFF and not 0x **0000** FFFF.
 if the arch is 8b, the unsigned int could be 16b, and in that case the
 original declaration could works, but depends also on the compiler
 
@@ -114,8 +114,13 @@ a better approach could be to decleare as
 ```
     unsigned int complement2zero_by_ones = ~0; // 1′ s complement to zero toogling all bits of 0 in any arch
 ```
+or even better use only stdint types that are arch/compiler independent like
 
-### C
+```
+    uint32_t null = 0;
+    uint32_t complement2zero_by_ones = ~0; // 1′ s complement to zero toogling all bits of 0 in any arch
+```
+### C - null and 1's complement
 
 <p align="center">
     <img src="./q3/q3_c.jpg" width=700 title="what does the code do">
@@ -138,8 +143,90 @@ so it will print
 a
 ```
 
+### D - Which is faster
+
+<p align="center">
+    <img src="./q3/q3_d.jpg" width=500 title="which is faster">
+</p>
+
+in C the 2D array is stored as row major, so the first element of the array is
+the first element of the first row, the second element of the array is the
+second element of the first row, and so on.
+i.e. if 
+```
+int a[3][5]={
+    { 10,20,30,40,50 },
+    { 11,21,31,41,51 },
+    { 12,22,32,42,52 },
+}
+```
+the raw stored in memory is 
+```
+10,20,30,40,50,11,21,31,41,51,12,22,32,42,52
+```
+if your platform has some kind of contiguous mem cache strategy, it will be
+faster to access contiguous data instead of jumping from far away address.
+
+So it'll be faster to iterate over the array using the row as the inner loop as
+in second example
+
+if the platform doesn't have cache strategy, maybe it also could optimize the
+read of multiple data at once like in simd, so it's convinient to loop as in
+second example also
+
+### E - float print and representation
+
+<p align="center">
+    <img src="./q3/q3_e.jpg" width=500 title="floats representation">
+</p>
+
+the 9/7 is considered as a integer division, so it will end up in **1**
+then 1 is converted to float to be stored in x.
+
+so x ends with 1.00 in IEEE 754 float representation and the printf %f format
+will print out as 1.000000
+
+to store the actual 9/7 division you need to cast one of the operands to float
+as:
+```
+    float x = 9.0/7;
+```
+or
+```
+    float x = 9/7.0;
+```
+or
+```
+    float x = (float)9/7;
+```
+and the so on
 
 
+### F - C++ references parameters
 
 
+<p align="center">
+    <img src="./q3/q3_f.jpg" width=700 title="floats representation">
+</p>
 
+
+the function inc receive the array as reference so it could modify the actual
+array data as in the snippet:
+```
+void inc(char &array) 
+{
+   array++;              // 'A' -> 'B'
+   *(&array+1) = 'P';    // 'G' -> 'P'
+   (*(&array+1))++;      // 'P' -> 'Q'
+   char *ptr   = &array; //           
+   *(ptr+2)    = 'N';    // 'V' -> 'N'
+   char *ptr2  = ptr;    //           
+   *ptr2       = 'R';    // 'B' -> 'R'
+   (*ptr2)++;            // 'R' -> 'S'
+}
+```
+
+so in the end the main will print: 
+```
+SQN
+```
