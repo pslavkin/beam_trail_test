@@ -10,13 +10,19 @@
 #include "task_b.h"
 #include "task_c.h"
 #include "task_i2c.h"
+#include "log.h"
 
 #define MODULE    "I2C"
 #define LOG_COLOR 7
-#define LOG(fmt, ...) printf("\033[38;5;%um" "| %10s | %20s | " fmt, LOG_COLOR,MODULE,__func__, ##__VA_ARGS__)
 
 static struct queue_t q;
 static struct queue_t qAck;
+
+bool taskI2C_enqueueFromIsr(struct msg_t msg) 
+{
+   LOG("data_length: %zu data: %s\n",  msg.data_length, msg.data);
+   return queue_enqueueFromIsr(&q, msg);
+}
 bool taskI2C_enqueue(struct msg_t msg) 
 {
    LOG("data_length: %zu data: %s\n",  msg.data_length, msg.data);

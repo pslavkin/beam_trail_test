@@ -18,9 +18,26 @@ void queue_init(struct queue_t *q)
 }
 
 // Enqueue an element
+bool queue_enqueueFromIsr(struct queue_t *q, struct msg_t value) 
+{
+   bool ans = false;
+   pthread_mutex_lock(&q->lock);
+
+   // Wait if the queue is full
+   if (q->count <= QUEUE_SIZE) {
+
+      q->buffer[q->rear] = value;
+      q->rear = (q->rear + 1) % QUEUE_SIZE;
+      q->count++;
+      pthread_cond_signal(&q->not_empty);
+      ans = true;
+   }
+   pthread_mutex_unlock(&q->lock);
+   return ans;
+}
+
 bool queue_enqueue(struct queue_t *q, struct msg_t value) 
 {
-   bool ans = true;
    pthread_mutex_lock(&q->lock);
 
    // Wait if the queue is full
@@ -35,7 +52,7 @@ bool queue_enqueue(struct queue_t *q, struct msg_t value)
    pthread_cond_signal(&q->not_empty);
    pthread_mutex_unlock(&q->lock);
 
-   return ans;
+   return true;
 }
 
 // Dequeue an element

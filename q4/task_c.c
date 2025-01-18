@@ -9,10 +9,11 @@
 #include "task_b.h"
 #include "task_c.h"
 #include "task_i2c.h"
+#include "log.h"
 
 #define MODULE    "TASK_C"
 #define LOG_COLOR 4
-#define LOG(fmt, ...) printf("\033[38;5;%um" "| %10s | %20s | " fmt, LOG_COLOR,MODULE,__func__, ##__VA_ARGS__)
+#define TASK_PERIOD 5
 
 static struct queue_t q;
 
@@ -36,14 +37,14 @@ void* taskC(void* arg)
        msg.address     = i;
        msg.callback    = i2cEndCallback;
        msg.data_length = 10;
-       msg.data        = (uint8_t*)"taskC msg data 0123456789";
-       taskI2C_enqueue ( msg );
-       msgAck = queue_dequeue ( &q ); //queue as a semaphore to wait for the ack
-       LOG("%s I2C ack: %u\r\n",__func__,msgAck.status);
+       msg.data        = (uint8_t*)"taskC"; // fake some data
+       // simulate send i2c from isr, so it won't block and in case queue is full, drop msg
+       if( taskI2C_enqueueFromIsr ( msg ) ) {
+          msgAck = queue_dequeue ( &q );    // queue as a semaphore to wait for the ack
+          LOG("%s I2C ack: %u\r\n",__func__,msgAck.status);
+       }
        i++;
-
-       // Simulate some work with sleep
-       sleep(1);
+       sleep(TASK_PERIOD); //not very ofen but high priority
 
     }
     queue_destroy(&q);

@@ -9,6 +9,7 @@
 #include "task_b.h"
 #include "task_c.h"
 #include "task_i2c.h"
+#include "log.h"
 
 pthread_t threadA;
 pthread_t threadB;

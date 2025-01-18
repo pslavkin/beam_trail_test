@@ -6,19 +6,19 @@
 #include <pthread.h>
 #include "queue_lib.h"
 #include "driver_i2c.h"
+#include "log.h"
 
 #define MODULE    "DRIVER_I2C"
 #define LOG_COLOR 6
-#define LOG(fmt, ...) printf("\033[38;5;%um" "| %10s | %20s | " fmt, LOG_COLOR,MODULE,__func__, ##__VA_ARGS__)
 
 static pthread_t    thread;
 static struct msg_t msg;
 
 void* task(void* arg) 
 {
-   LOG("begin hardware i2c tx that will take: %zu\r\n", msg.data_length);
+   LOG("tx: %s take: %zu\r\n", msg.data, msg.data_length);
    sleep(msg.data_length);
-   LOG("hardware i2c end\r\n");
+   LOG("tx end\r\n");
    msg.callback(true);
    return NULL;
 }
