@@ -7,14 +7,18 @@
 #include "queue_lib.h"
 #include "driver_i2c.h"
 
+#define MODULE    "DRIVER_I2C"
+#define LOG_COLOR 6
+#define LOG(fmt, ...) printf("\033[38;5;%um" "| %10s | %20s | " fmt, LOG_COLOR,MODULE,__func__, ##__VA_ARGS__)
+
 static pthread_t    thread;
 static struct msg_t msg;
 
 void* task(void* arg) 
 {
-   printf("begin hardware i2c tx that will take: %zu\r\n", msg.data_length);
+   LOG("begin hardware i2c tx that will take: %zu\r\n", msg.data_length);
    sleep(msg.data_length);
-   printf("hardware i2c end\r\n");
+   LOG("hardware i2c end\r\n");
    msg.callback(true);
    return NULL;
 }

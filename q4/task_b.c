@@ -10,32 +10,36 @@
 #include "task_c.h"
 #include "task_i2c.h"
 
-static struct queue_t q;
+#define MODULE    "TASK_B"
+#define LOG_COLOR 3
+#define LOG(fmt, ...) printf("\033[38;5;%um" "| %10s | %20s | " fmt, LOG_COLOR,MODULE,__func__, ##__VA_ARGS__)
 
-bool taskB_enqueue(struct msg_t msg) 
-{
-   queue_enqueue(&q, msg);
-   return 1;
-}
+static struct queue_t q;
 
 static void i2cEndCallback(bool status) 
 {
-   printf("Task %s callback: %d\n", __func__,status);
+   struct msg_t msg = {
+      .status = status,
+   };
+   queue_enqueue(&q, msg);
 }
 
 void* taskB(void* arg) 
 {
     struct msg_t msg;
+    struct msg_t msgAck;
     int          i = 0;
 
-    printf("%s is running.\n", __func__);
+    LOG("%s is running.\n", __func__);
     queue_init(&q);
     while(1) {
-       msg.address=i;
-       msg.callback = i2cEndCallback;
-       taskI2C_enqueue(msg);
-       msg = queue_dequeue(&q); 
-       printf("Message: %u\n", msg.address);
+       msg.address     = i;
+       msg.callback    = i2cEndCallback;
+       msg.data_length = 3;
+       msg.data        = (uint8_t*)"taskB msg data 0123456789";
+       taskI2C_enqueue ( msg );
+       msgAck = queue_dequeue ( &q ); //queue as a semaphore to wait for the ack
+       LOG("%s I2C ack: %u\r\n",__func__,msgAck.status);
        i++;
 
        // Simulate some work with sleep
@@ -43,6 +47,6 @@ void* taskB(void* arg)
 
     }
     queue_destroy(&q);
-    printf("%s is finished.\n", __func__);
+    LOG("%s is finished.\n", __func__);
     return NULL;
 }

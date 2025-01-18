@@ -18,13 +18,13 @@ pthread_t threadI2C;
 int main(void) 
 {
    pthread_create(&threadI2C ,NULL ,taskI2C ,NULL);
-   //pthread_create(&threadA   ,NULL ,taskA   ,NULL);
-   //pthread_create(&threadB   ,NULL ,taskB   ,NULL);
+   pthread_create(&threadA   ,NULL ,taskA   ,NULL);
+   pthread_create(&threadB   ,NULL ,taskB   ,NULL);
    pthread_create(&threadC   ,NULL ,taskC   ,NULL);
 
    pthread_join(threadI2C ,NULL);
    pthread_join(threadC   ,NULL);
-   //pthread_join(threadB   ,NULL);
-   //pthread_join(threadA   ,NULL);
+   pthread_join(threadB   ,NULL);
+   pthread_join(threadA   ,NULL);
    return 0;
 }

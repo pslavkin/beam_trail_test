@@ -5,7 +5,10 @@
 
 // Queue structure
 struct msg_t {
-   uint8_t    address;
+   union {
+      uint8_t address;
+      bool    status;
+   };
    uint8_t*   data;
    size_t     data_length;
    void       (*callback)(bool);

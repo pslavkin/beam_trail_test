@@ -10,21 +10,27 @@
 #include "task_c.h"
 #include "task_i2c.h"
 
+#define MODULE    "TASK_C"
+#define LOG_COLOR 4
+#define LOG(fmt, ...) printf("\033[38;5;%um" "| %10s | %20s | " fmt, LOG_COLOR,MODULE,__func__, ##__VA_ARGS__)
+
 static struct queue_t q;
 
 static void i2cEndCallback(bool status) 
 {
-   struct msg_t msgDummy;
-
-   queue_enqueue(&q, msgDummy);
+   struct msg_t msg = {
+      .status = status,
+   };
+   queue_enqueue(&q, msg);
 }
 
 void* taskC(void* arg) 
 {
     struct msg_t msg;
+    struct msg_t msgAck;
     int          i = 0;
 
-    printf("%s is running.\n", __func__);
+    LOG("%s is running.\n", __func__);
     queue_init(&q);
     while(1) {
        msg.address     = i;
@@ -32,8 +38,8 @@ void* taskC(void* arg)
        msg.data_length = 10;
        msg.data        = (uint8_t*)"taskC msg data 0123456789";
        taskI2C_enqueue ( msg );
-       msg = queue_dequeue ( &q ); //queue as a semaphore to wait for the ack
-       printf("%s I2C ack\r\n",__func__);
+       msgAck = queue_dequeue ( &q ); //queue as a semaphore to wait for the ack
+       LOG("%s I2C ack: %u\r\n",__func__,msgAck.status);
        i++;
 
        // Simulate some work with sleep
