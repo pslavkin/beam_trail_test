@@ -230,3 +230,10 @@ so in the end the main will print:
 ```
 SQN
 ```
+
+## Q4 - software arquitecture
+
+<p align="center">
+    <img src="./q4/q4.jpg" width=700 title="software arquitecture">
+</p>
+
