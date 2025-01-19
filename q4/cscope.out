@@ -1,4 +1,124 @@
-cscope 15 $HOME/test/beam_trail/q4               0000279311
+cscope 15 $HOME/test/beam_trail/q4               0000282621
+	@config.h
+
+1 #i‚de‡
+CONFIG_H
+
+
+2 
+	#CONFIG_H
+
+
+	)
+
+5 
+	#TASK_A_ENABLE
+ 
+åue
+
+
+	)
+
+6 
+	#TASK_A_PERIOD_MS
+ 2000
+
+	)
+
+7 
+	#TASK_A_DATA_LENGTH
+ 10000
+
+	)
+
+8 
+	#TASK_A_LOG_ENABLE
+ 
+åue
+
+
+	)
+
+11 
+	#TASK_B_ENABLE
+ 
+Ál£
+
+
+	)
+
+12 
+	#TASK_B_PERIOD_MS
+ 1000
+
+	)
+
+13 
+	#TASK_B_DATA_LENGTH
+ 10
+
+	)
+
+14 
+	#TASK_B_LOG_ENABLE
+ 
+åue
+
+
+	)
+
+17 
+	#TASK_C_ENABLE
+ 
+åue
+
+
+	)
+
+18 
+	#TASK_C_PERIOD_MS
+ 1000
+
+	)
+
+19 
+	#TASK_C_DATA_LENGTH
+ 10
+
+	)
+
+20 
+	#TASK_C_LOG_ENABLE
+ 
+åue
+
+
+	)
+
+22 
+	#LOG_QUEUE_ENABLE
+ 
+åue
+
+
+	)
+
+23 
+	#TASK_I2C_LOG_ENABLE
+ 
+åue
+
+
+	)
+
+24 
+	#I2C_DRIVER_LOG_ENABLE
+ 
+åue
+
+
+	)
+
 	@driver_i2c.c
 
 1 
@@ -6,64 +126,102 @@ cscope 15 $HOME/test/beam_trail/q4               0000279311
 >
 
 2 
-	~<°dlib.h
->
-
-3 
 	~<°döt.h
 >
 
-4 
+3 
 	~<°dboﬁ.h
 >
 
+4 
+	~<uni°d.h
+>
+
 5 
+	~<°dlib.h
+>
+
+6 
+	~<±hªad.h
+>
+
+7 
+	~"c⁄fig.h
+"
+
+8 
+	~"log.h
+"
+
+9 
 	~"queue_lib.h
 "
 
-6 
+10 
 	~"drivî_i2c.h
 "
 
-8 
+12 
+	#MODULE
+ "DRIVER_I2C"
+
+	)
+
+13 
+	#LOG_COLOR
+ 6
+
+	)
+
+14 
+	#LOG_ENABLE
+ 
+I2C_DRIVER_LOG_ENABLE
+
+
+	)
+
+16 
 ±hªad_t
  
 	gthªad
 ;
 
-9 
+17 
 msg_t
  
 	gmsg
 ;
 
-11 * 
+20 * 
 	$èsk
 (* 
 ¨g
 )
 
-13 
-	`¥ötf
-("begö h¨dw¨êi2¯txÅh© wû»èke: %zu\r\n", 
+23 
+	`LOG
+("tx: %†èke: %zu[mS]\r\n", 
 msg
 .
+d©a
+, msg.
 d©a_Àngth
 );
 
-14 
-	`¶ìp
+25 
+	`u¶ìp
 (
 msg
 .
 d©a_Àngth
-);
+*1000);
 
-15 
-	`¥ötf
-("hardware i2cÉnd\r\n");
+26 
+	`LOG
+("txÉnd\r\n");
 
-16 
+29 
 msg
 .
 	`ˇŒback
@@ -71,15 +229,15 @@ msg
 åue
 );
 
-17  
+30  
 NULL
 ;
 
-18 
+31 
 	}
 }
 
-20 
+33 
 I2C_wrôe
 (
 uöt8_t
@@ -90,68 +248,50 @@ d©a
 , 
 size_t
  
-d©a_Ànght
+d©a_Àngth
 , (*
 ˇŒback
 )(
 boﬁ
 ))
 
-22 if(
-	`±hªad_ˇn˚l
- ( 
-thªad
- )!=0) {
-
-23 
-	`¥ötf
-("I2C_write called while inÅx, impredictable function\r\n");
-
-25 
-	`±hªad_joö
- ( 
-thªad
-, 
-NULL
- );
-
-27 
+35 
 msg
 .
 addªss
  =áddress;
 
-28 
+36 
 msg
 .
 d©a
  = data;
 
-29 
+37 
 msg
 .
-d©a_Ànght
- = data_lenght;
+d©a_Àngth
+ = data_length;
 
-30 
+38 
 msg
 .
 ˇŒback
  = callback;
 
-32 
+40 
 	`±hªad_¸óã
-(
+(&
 thªad
-, &
-msg
- , 
-èsk
-, 
+ ,
 NULL
+ ,
+èsk
+ ,&
+msg
 );
 
-33 
+41 
 	}
 }
 
@@ -185,6 +325,76 @@ d©a_Ànght
 boﬁ
 ));
 
+	@log.h
+
+1 #i‚de‡
+LOG_H
+
+
+2 
+	#LOG_H
+
+
+	)
+
+4 
+	#LOG
+(
+fmt
+, ...) \
+
+5 if(
+LOG_ENABLE
+==
+åue
+) { \
+
+6 
+time•ec
+ 
+ts
+; \
+
+7 
+	`˛ock_gëtime
+(
+CLOCK_REALTIME
+, &
+ts
+);\
+
+8 
+uöt32_t
+ 
+now
+ = ()(
+ts
+.
+tv_£c
+ * 1000Ë+ (ts.
+tv_n£c
+ / 1000000); \
+
+9 
+	`¥ötf
+("\033[38;5;%um" "| %08u | %10†| %25†| " 
+fmt
+, 
+LOG_COLOR
+,
+now
+, 
+MODULE
+,
+__func__
+, ##
+__VA_ARGS__
+); \
+
+10 }
+
+	)
+
 	@main.c
 
 1 
@@ -212,88 +422,62 @@ boﬁ
 >
 
 7 
-	~"queue_lib.h
+	~"c⁄fig.h
 "
 
 8 
-	~"èsk_a.h
+	~"queue_lib.h
 "
 
 9 
-	~"èsk_b.h
+	~"èsk_a.h
 "
 
 10 
-	~"èsk_c.h
+	~"èsk_b.h
 "
 
 11 
+	~"èsk_c.h
+"
+
+12 
 	~"èsk_i2c.h
 "
 
-13 
+13 
+	~"log.h
+"
+
+16 
 	$maö
 ()
 
-15 
-±hªad_t
- 
-thªads
-[4];
+18 
+	`öôTaskI2C
+ ( );
 
-16 * (*
-èsk
-[])(* 
-¨g
-Ë{
-èskI2C
- ,
-èskA
- ,
-èskB
- ,
-èskC
-};
+19 
+	`öôTaskA
+ ( );
 
-19 
-i
- = 0; i < 4; i++) {
-
-20 i‡(
-	`±hªad_¸óã
-(&
-thªads
-[
-i
-], 
-NULL
-, 
-èsk
-[i], NULL) != 0) {
+20 
+	`öôTaskB
+ ( );
 
 21 
-	`≥º‹
-("FailedÅo createÅhread");
+	`öôTaskC
+ ( );
 
-27 
-i
- = 0; i < 4; i++) {
+23 
+åue
+) {
+
+24 
+	`¶ìp
+(1);
 
 28 
-	`±hªad_joö
-(
-thªads
-[
-i
-], 
-NULL
-);
-
-31 
-	`¥ötf
-("AllÅasks completed.\n");
-
-33 
 	}
 }
 
@@ -324,10 +508,38 @@ NULL
 >
 
 7 
+	~"c⁄fig.h
+"
+
+8 
+	~"log.h
+"
+
+9 
 	~"queue_lib.h
 "
 
-10 
+11 
+	#MODULE
+ "QUEUE"
+
+	)
+
+12 
+	#LOG_COLOR
+ 10
+
+	)
+
+13 
+	#LOG_ENABLE
+ 
+LOG_QUEUE_ENABLE
+
+
+	)
+
+16 
 	$queue_öô
 (
 queue_t
@@ -335,25 +547,25 @@ queue_t
 q
 )
 
-12 
+18 
 q
 ->
 ‰⁄t
  = 0;
 
-13 
+19 
 q
 ->
 ª¨
  = 0;
 
-14 
+20 
 q
 ->
 cou¡
  = 0;
 
-15 
+21 
 	`±hªad_muãx_öô
  ( &
 q
@@ -363,7 +575,7 @@ lock
 NULL
  );
 
-16 
+22 
 	`±hªad_c⁄d_öô
  ( &
 q
@@ -373,7 +585,7 @@ nŸ_em±y
 NULL
  );
 
-17 
+23 
 	`±hªad_c⁄d_öô
  ( &
 q
@@ -383,11 +595,105 @@ nŸ_fuŒ
 NULL
  );
 
-18 
+24 
 	}
 }
 
-21 
+27 
+boﬁ
+ 
+	$queue_íqueueFromI§
+(
+queue_t
+ *
+q
+, 
+msg_t
+ 
+vÆue
+)
+
+29 
+boﬁ
+ 
+™s
+ = 
+Ál£
+;
+
+30 
+	`±hªad_muãx_lock
+(&
+q
+->
+lock
+);
+
+33 i‡(
+q
+->
+cou¡
+ <
+QUEUE_SIZE
+) {
+
+35 
+q
+->
+buf„r
+[q->
+ª¨
+] = 
+vÆue
+;
+
+36 
+q
+->
+ª¨
+ = (q->ª¨ + 1Ë% 
+QUEUE_SIZE
+;
+
+37 
+q
+->
+cou¡
+++;
+
+38 
+	`±hªad_c⁄d_sig«l
+(&
+q
+->
+nŸ_em±y
+);
+
+39 
+™s
+ = 
+åue
+;
+
+41 
+	`±hªad_muãx_u∆ock
+(&
+q
+->
+lock
+);
+
+42  
+™s
+;
+
+43 
+	}
+}
+
+45 
+boﬁ
+ 
 	$queue_íqueue
 (
 queue_t
@@ -399,7 +705,7 @@ msg_t
 vÆue
 )
 
-23 
+47 
 	`±hªad_muãx_lock
 (&
 q
@@ -407,7 +713,7 @@ q
 lock
 );
 
-26 
+50 
 q
 ->
 cou¡
@@ -415,7 +721,15 @@ cou¡
 QUEUE_SIZE
 ) {
 
-27 
+51 
+	`LOG
+("-->ÉnqueuêfuŒ, block: %u\r\n",
+q
+->
+cou¡
+);
+
+52 
 	`±hªad_c⁄d_waô
 (&
 q
@@ -425,7 +739,7 @@ nŸ_fuŒ
 lock
 );
 
-30 
+54 
 q
 ->
 buf„r
@@ -435,7 +749,7 @@ buf„r
 vÆue
 ;
 
-31 
+55 
 q
 ->
 ª¨
@@ -443,13 +757,25 @@ q
 QUEUE_SIZE
 ;
 
-32 
+56 
 q
 ->
 cou¡
 ++;
 
-34 
+57 
+	`LOG
+("-->Énqueuêd©a: %†•a˚: %u\r\n",
+vÆue
+.
+d©a
+, 
+q
+->
+cou¡
+);
+
+59 
 	`±hªad_c⁄d_sig«l
 (&
 q
@@ -457,7 +783,7 @@ q
 nŸ_em±y
 );
 
-35 
+60 
 	`±hªad_muãx_u∆ock
 (&
 q
@@ -465,11 +791,15 @@ q
 lock
 );
 
-36 
+61  
+åue
+;
+
+62 
 	}
 }
 
-39 
+65 
 msg_t
  
 	$queue_dequeue
@@ -479,7 +809,7 @@ queue_t
 q
 )
 
-41 
+67 
 	`±hªad_muãx_lock
 (&
 q
@@ -487,13 +817,13 @@ q
 lock
 );
 
-44 
+70 
 q
 ->
 cou¡
  == 0) {
 
-45 
+71 
 	`±hªad_c⁄d_waô
 (&
 q
@@ -503,7 +833,7 @@ nŸ_em±y
 lock
 );
 
-48 
+74 
 msg_t
  
 msg
@@ -515,7 +845,7 @@ buf„r
 ‰⁄t
 ];
 
-49 
+75 
 q
 ->
 ‰⁄t
@@ -523,13 +853,25 @@ q
 QUEUE_SIZE
 ;
 
-50 
+76 
 q
 ->
 cou¡
 --;
 
-52 
+77 
+	`LOG
+("<-- dequeuêd©a: %†•a˚: %u\r\n",
+msg
+.
+d©a
+ ,
+q
+->
+cou¡
+);
+
+79 
 	`±hªad_c⁄d_sig«l
 (&
 q
@@ -537,7 +879,7 @@ q
 nŸ_fuŒ
 );
 
-53 
+80 
 	`±hªad_muãx_u∆ock
 (&
 q
@@ -545,15 +887,15 @@ q
 lock
 );
 
-55  
+82  
 msg
 ;
 
-56 
+83 
 	}
 }
 
-59 
+86 
 	$queue_de°roy
 (
 queue_t
@@ -561,7 +903,7 @@ queue_t
 q
 )
 
-61 
+88 
 	`±hªad_muãx_de°roy
 (&
 q
@@ -569,7 +911,7 @@ q
 lock
 );
 
-62 
+89 
 	`±hªad_c⁄d_de°roy
 (&
 q
@@ -577,7 +919,7 @@ q
 nŸ_em±y
 );
 
-63 
+90 
 	`±hªad_c⁄d_de°roy
 (&
 q
@@ -585,7 +927,7 @@ q
 nŸ_fuŒ
 );
 
-64 
+91 
 	}
 }
 
@@ -611,35 +953,41 @@ QUEUE_LIB_H
 	smsg_t
  {
 
-8 
+9 
 uöt8_t
  
 	maddªss
 ;
 
-9 
+10 
+boﬁ
+ 
+	m°©us
+;
+
+12 
 uöt8_t
 * 
 	md©a
 ;
 
-10 
+13 
 size_t
  
-	md©a_Ànght
+	md©a_Àngth
 ;
 
-11 (*
+14 (*
 	mˇŒback
 )(
 	mboﬁ
 );
 
-14 
+17 
 	squeue_t
  {
 
-15 
+18 
 msg_t
  
 	mbuf„r
@@ -647,37 +995,37 @@ msg_t
 QUEUE_SIZE
  ];
 
-16 
+19 
 	m‰⁄t
 ;
 
-17 
+20 
 	mª¨
 ;
 
-18 
+21 
 	mcou¡
 ;
 
-19 
+22 
 ±hªad_muãx_t
  
 	mlock
 ;
 
-20 
+23 
 ±hªad_c⁄d_t
  
 	mnŸ_em±y
 ;
 
-21 
+24 
 ±hªad_c⁄d_t
  
 	mnŸ_fuŒ
 ;
 
-24 
+27 
 queue_öô
  ( 
 queue_t
@@ -685,7 +1033,23 @@ queue_t
 q
  );
 
-25 
+28 
+boﬁ
+ 
+queue_íqueueFromI§
+ ( 
+queue_t
+ *
+q
+, 
+msg_t
+ 
+vÆue
+ );
+
+29 
+boﬁ
+ 
 queue_íqueue
  ( 
 queue_t
@@ -697,7 +1061,7 @@ msg_t
 msg
  );
 
-26 
+30 
 msg_t
  
 queue_dequeue
@@ -707,7 +1071,7 @@ queue_t
 q
  );
 
-27 
+31 
 queue_de°roy
  ( 
 queue_t
@@ -1228,54 +1592,90 @@ q
 >
 
 7 
-	~"queue_lib.h
+	~"c⁄fig.h
 "
 
 8 
-	~"èsk_a.h
+	~"log.h
 "
 
 9 
-	~"èsk_b.h
+	~"queue_lib.h
 "
 
 10 
-	~"èsk_c.h
+	~"èsk_a.h
 "
 
 11 
+	~"èsk_b.h
+"
+
+12 
+	~"èsk_c.h
+"
+
+13 
 	~"èsk_i2c.h
 "
 
-13 
+15 
+	#MODULE
+ "TASK_A"
+
+	)
+
+16 
+	#LOG_COLOR
+ 2
+
+	)
+
+17 
+	#TASK_PERIOD_MS
+ 
+TASK_A_PERIOD_MS
+
+
+	)
+
+18 
+	#TASK_ENABLE
+ 
+TASK_A_ENABLE
+
+
+	)
+
+19 
+	#TASK_DATA_LENGTH
+ 
+TASK_A_DATA_LENGTH
+
+
+	)
+
+20 
+	#LOG_ENABLE
+ 
+TASK_A_LOG_ENABLE
+
+
+	)
+
+22 
+±hªad_t
+ 
+	gthªad
+;
+
+23 
 queue_t
  
 	gq
 ;
 
-15 
-boﬁ
- 
-	$èskA_íqueue
-(
-msg_t
- 
-msg
-)
-
-17 
-	`queue_íqueue
-(&
-q
-, 
-msg
-);
-
-19 
-	}
-}
-
-21 
+25 
 	$i2cEndCÆlback
 (
 boﬁ
@@ -1283,55 +1683,69 @@ boﬁ
 °©us
 )
 
-23 
-	`¥ötf
-("Task %†ˇŒback: %d\n", 
-__func__
-,
+27 
+msg_t
+ 
+msg
+ = {
+
+28 .
 °©us
+ = status,
+
+30 
+	`queue_íqueue
+(&
+q
+, 
+msg
 );
 
-24 
+31 
 	}
 }
 
-28 * 
-	$èskA
+33 * 
+	$èsk
 (* 
 ¨g
 )
 
-30 
+35 
 msg_t
  
 msg
 ;
 
-31 
+36 
+msg_t
+ 
+msgAck
+;
+
+37 
 i
  = 0;
 
-33 
-	`¥ötf
-("%†i†ru¬ög.\n", 
-__func__
-);
+39 
+	`LOG
+("running...\r\n");
 
-34 
+40 
 	`queue_öô
 (&
 q
 );
 
-36 
+43 
 msg
 .
 addªss
-=
+ = 
 i
 ;
 
-37 
+44 
 msg
 .
 ˇŒback
@@ -1339,53 +1753,89 @@ msg
 i2cEndCÆlback
 ;
 
-38 
-	`èskI2C_íqueue
-(
-msg
-);
-
-39 
-msg
- = 
-	`queue_dequeue
-(&
-q
-);
-
-40 
-	`¥ötf
-("Mesßge: %u\n", 
+45 
 msg
 .
-addªss
+d©a_Àngth
+ = 
+TASK_DATA_LENGTH
+;
+
+46 
+msg
+.
+d©a
+ = (
+uöt8_t
+*)
+MODULE
+;
+
+48 
+	`èskI2C_íqueue
+ ( 
+msg
+ );
+
+50 
+msgAck
+ = 
+	`queue_dequeue
+ ( &
+q
+ );
+
+51 
+	`LOG
+("I2Cáck: %u\r\n",
+msgAck
+.
+°©us
 );
 
-41 
+52 
 i
 ++;
 
-44 
-	`¶ìp
-(1);
+53 
+	`u¶ìp
+(
+TASK_PERIOD_MS
+*1000);
 
-47 
+55 
 	`queue_de°roy
 (&
 q
 );
 
-48 
-	`¥ötf
-("%†i†föished.\n", 
-__func__
-);
-
-49  
+56  
 NULL
 ;
 
-50 
+57 
+	}
+}
+
+60 
+	$öôTaskA
+()
+
+62 if(
+TASK_ENABLE
+) {
+
+63 
+	`±hªad_¸óã
+(&
+thªad
+ ,
+NULL
+ ,
+èsk
+ ,NULL);
+
+65 
 	}
 }
 
@@ -1401,21 +1851,9 @@ TASK_A_H
 
 	)
 
-4 * 
-èskA
- ( * 
-¨g
- );
-
-5 
-boﬁ
- 
-èskA_íqueue
- ( 
-msg_t
- 
-msg
- );
+4 
+öôTaskA
+();
 
 	@task_b.c
 
@@ -1444,54 +1882,90 @@ msg
 >
 
 7 
-	~"queue_lib.h
+	~"c⁄fig.h
 "
 
 8 
-	~"èsk_a.h
+	~"log.h
 "
 
 9 
-	~"èsk_b.h
+	~"queue_lib.h
 "
 
 10 
-	~"èsk_c.h
+	~"èsk_a.h
 "
 
 11 
+	~"èsk_b.h
+"
+
+12 
+	~"èsk_c.h
+"
+
+13 
 	~"èsk_i2c.h
 "
 
-13 
+15 
+	#MODULE
+ "TASK_B"
+
+	)
+
+16 
+	#LOG_COLOR
+ 3
+
+	)
+
+17 
+	#TASK_PERIOD_MS
+ 
+TASK_B_PERIOD_MS
+
+
+	)
+
+18 
+	#TASK_ENABLE
+ 
+TASK_B_ENABLE
+
+
+	)
+
+19 
+	#TASK_DATA_LENGTH
+ 
+TASK_B_DATA_LENGTH
+
+
+	)
+
+20 
+	#LOG_ENABLE
+ 
+TASK_B_LOG_ENABLE
+
+
+	)
+
+22 
+±hªad_t
+ 
+	gthªad
+;
+
+23 
 queue_t
  
 	gq
 ;
 
-15 
-boﬁ
- 
-	$èskB_íqueue
-(
-msg_t
- 
-msg
-)
-
-17 
-	`queue_íqueue
-(&
-q
-, 
-msg
-);
-
-19 
-	}
-}
-
-21 
+25 
 	$i2cEndCÆlback
 (
 boﬁ
@@ -1499,55 +1973,69 @@ boﬁ
 °©us
 )
 
-23 
-	`¥ötf
-("Task %†ˇŒback: %d\n", 
-__func__
-,
+27 
+msg_t
+ 
+msg
+ = {
+
+28 .
 °©us
+ = status,
+
+30 
+	`queue_íqueue
+(&
+q
+, 
+msg
 );
 
-24 
+31 
 	}
 }
 
-26 * 
-	$èskB
+33 * 
+	$èsk
 (* 
 ¨g
 )
 
-28 
+35 
 msg_t
  
 msg
 ;
 
-29 
+36 
+msg_t
+ 
+msgAck
+;
+
+37 
 i
  = 0;
 
-31 
-	`¥ötf
-("%†i†ru¬ög.\n", 
-__func__
-);
+39 
+	`LOG
+("running...\r\n");
 
-32 
+40 
 	`queue_öô
 (&
 q
 );
 
-34 
+43 
 msg
 .
 addªss
-=
+ = 
 i
 ;
 
-35 
+44 
 msg
 .
 ˇŒback
@@ -1555,53 +2043,89 @@ msg
 i2cEndCÆlback
 ;
 
-36 
-	`èskI2C_íqueue
-(
-msg
-);
-
-37 
-msg
- = 
-	`queue_dequeue
-(&
-q
-);
-
-38 
-	`¥ötf
-("Mesßge: %u\n", 
+45 
 msg
 .
-addªss
+d©a_Àngth
+ = 
+TASK_B_DATA_LENGTH
+;
+
+46 
+msg
+.
+d©a
+ = (
+uöt8_t
+*)
+MODULE
+;
+
+48 
+	`èskI2C_íqueue
+ ( 
+msg
+ );
+
+50 
+msgAck
+ = 
+	`queue_dequeue
+ ( &
+q
+ );
+
+51 
+	`LOG
+("I2Cáck: %u\r\n",
+msgAck
+.
+°©us
 );
 
-39 
+52 
 i
 ++;
 
-42 
-	`¶ìp
-(1);
+53 
+	`u¶ìp
+(
+TASK_PERIOD_MS
+*1000);
 
-45 
+55 
 	`queue_de°roy
 (&
 q
 );
 
-46 
-	`¥ötf
-("%†i†föished.\n", 
-__func__
-);
-
-47  
+56  
 NULL
 ;
 
-48 
+57 
+	}
+}
+
+60 
+	$öôTaskB
+()
+
+62 if(
+TASK_ENABLE
+) {
+
+63 
+	`±hªad_¸óã
+(&
+thªad
+ ,
+NULL
+ ,
+èsk
+ ,NULL);
+
+65 
 	}
 }
 
@@ -1617,21 +2141,9 @@ TASK_B_H
 
 	)
 
-4 * 
-èskB
- ( * 
-¨g
- );
-
-5 
-boﬁ
- 
-èskB_íqueue
- ( 
-msg_t
- 
-msg
- );
+4 
+öôTaskB
+();
 
 	@task_c.c
 
@@ -1660,54 +2172,90 @@ msg
 >
 
 7 
-	~"queue_lib.h
+	~"c⁄fig.h
 "
 
 8 
-	~"èsk_a.h
+	~"log.h
 "
 
 9 
-	~"èsk_b.h
+	~"queue_lib.h
 "
 
 10 
-	~"èsk_c.h
+	~"èsk_a.h
 "
 
 11 
+	~"èsk_b.h
+"
+
+12 
+	~"èsk_c.h
+"
+
+13 
 	~"èsk_i2c.h
 "
 
-13 
+15 
+	#MODULE
+ "TASK_C"
+
+	)
+
+16 
+	#LOG_COLOR
+ 4
+
+	)
+
+17 
+	#TASK_PERIOD_MS
+ 
+TASK_C_PERIOD_MS
+
+
+	)
+
+18 
+	#TASK_ENABLE
+ 
+TASK_C_ENABLE
+
+
+	)
+
+19 
+	#TASK_DATA_LENGTH
+ 
+TASK_C_DATA_LENGTH
+
+
+	)
+
+20 
+	#LOG_ENABLE
+ 
+TASK_C_LOG_ENABLE
+
+
+	)
+
+22 
+±hªad_t
+ 
+	gthªad
+;
+
+23 
 queue_t
  
 	gq
 ;
 
-15 
-boﬁ
- 
-	$èskC_íqueue
-(
-msg_t
- 
-msg
-)
-
-17 
-	`queue_íqueue
-(&
-q
-, 
-msg
-);
-
-19 
-	}
-}
-
-21 
+25 
 	$i2cEndCÆlback
 (
 boﬁ
@@ -1715,55 +2263,69 @@ boﬁ
 °©us
 )
 
-23 
-	`¥ötf
-("Task %†ˇŒback: %d\n", 
-__func__
-,
+27 
+msg_t
+ 
+msg
+ = {
+
+28 .
 °©us
+ = status,
+
+30 
+	`queue_íqueue
+(&
+q
+, 
+msg
 );
 
-24 
+31 
 	}
 }
 
-26 * 
-	$èskC
+33 * 
+	$èsk
 (* 
 ¨g
 )
 
-28 
-	`queue_öô
-(&
-q
-);
-
-29 
+35 
 msg_t
  
 msg
 ;
 
-30 
+36 
+msg_t
+ 
+msgAck
+;
+
+37 
 i
  = 0;
 
-32 
-	`¥ötf
-("%†i†ru¬ög.\n", 
-__func__
+39 
+	`LOG
+("running...\r\n");
+
+40 
+	`queue_öô
+(&
+q
 );
 
-34 
+43 
 msg
 .
 addªss
-=
+ = 
 i
 ;
 
-35 
+44 
 msg
 .
 ˇŒback
@@ -1771,53 +2333,93 @@ msg
 i2cEndCÆlback
 ;
 
-36 
-	`èskI2C_íqueue
-(
-msg
-);
-
-37 
-msg
- = 
-	`queue_dequeue
-(&
-q
-);
-
-38 
-	`¥ötf
-("Mesßge: %u\n", 
+45 
 msg
 .
-addªss
+d©a_Àngth
+ = 
+TASK_C_DATA_LENGTH
+;
+
+46 
+msg
+.
+d©a
+ = (
+uöt8_t
+*)
+MODULE
+;
+
+48 if–
+	`èskI2C_íqueueFromI§
+ ( 
+msg
+ ) ) {
+
+50 
+msgAck
+ = 
+	`queue_dequeue
+ ( &
+q
+ );
+
+51 
+	`LOG
+("I2Cáck: %u\r\n",
+msgAck
+.
+°©us
 );
 
-39 
+54 
+	`LOG
+("I2C queue is full, dropÅhe msg\r\n");
+
+56 
 i
 ++;
 
-42 
-	`¶ìp
-(1);
+57 
+	`u¶ìp
+(
+TASK_PERIOD_MS
+*1000);
 
-45 
+59 
 	`queue_de°roy
 (&
 q
 );
 
-46 
-	`¥ötf
-("%†i†föished.\n", 
-__func__
-);
-
-47  
+60  
 NULL
 ;
 
-48 
+61 
+	}
+}
+
+64 
+	$öôTaskC
+()
+
+66 if(
+TASK_ENABLE
+) {
+
+67 
+	`±hªad_¸óã
+(&
+thªad
+ ,
+NULL
+ ,
+èsk
+ ,NULL);
+
+69 
 	}
 }
 
@@ -1833,21 +2435,9 @@ TASK_C_H
 
 	)
 
-4 * 
-èskC
- ( * 
-¨g
- );
-
-5 
-boﬁ
- 
-èskC_íqueue
- ( 
-msg_t
- 
-msg
- );
+4 
+öôTaskC
+();
 
 	@task_i2c.c
 
@@ -1876,42 +2466,250 @@ msg
 >
 
 7 
-	~"queue_lib.h
+	~"c⁄fig.h
 "
 
 8 
-	~"drivî_i2c.h
+	~"log.h
 "
 
 9 
-	~"èsk_a.h
+	~"queue_lib.h
 "
 
 10 
-	~"èsk_b.h
+	~"èsk_a.h
 "
 
 11 
-	~"èsk_c.h
+	~"èsk_b.h
 "
 
 12 
+	~"èsk_c.h
+"
+
+13 
 	~"èsk_i2c.h
 "
 
-14 
+14 
+	~"drivî_i2c.h
+"
+
+16 
+	#MODULE
+ "I2C"
+
+	)
+
+17 
+	#LOG_COLOR
+ 7
+
+	)
+
+18 
+	#LOG_ENABLE
+ 
+TASK_I2C_LOG_ENABLE
+
+
+	)
+
+20 
+±hªad_t
+ 
+	gthªad
+;
+
+21 
 queue_t
  
 	gq
 ;
 
-15 
-boﬁ
+22 
+queue_t
  
-	gi2cEndSètus
+	gqAck
 ;
 
-17 
+24 
+	$i2cEndCÆlback
+(
+boﬁ
+ 
+°©us
+)
+
+26 
+msg_t
+ 
+msg
+ = {
+
+27 .
+°©us
+ = status,
+
+30 
+	`queue_íqueue
+(&
+qAck
+, 
+msg
+);
+
+31 
+	}
+}
+
+33 * 
+	$èsk
+(* 
+¨g
+)
+
+35 
+msg_t
+ 
+msg
+;
+
+36 
+msg_t
+ 
+msgAck
+;
+
+38 
+	`LOG
+("%†i†ru¬ög.\n", 
+__func__
+);
+
+39 
+	`queue_öô
+ ( &
+q
+ );
+
+40 
+	`queue_öô
+ ( &
+qAck
+ );
+
+41 
+åue
+) {
+
+43 
+msg
+ = 
+	`queue_dequeue
+(&
+q
+);
+
+45 
+	`I2C_wrôe
+(
+msg
+.
+addªss
+, msg.
+d©a
+, msg.
+d©a_Àngth
+, 
+i2cEndCÆlback
+);
+
+47 
+msgAck
+ = 
+	`queue_dequeue
+(&
+qAck
+);
+
+49 
+msg
+.
+	`ˇŒback
+(
+msgAck
+.
+°©us
+);
+
+51 
+	`queue_de°roy
+(&
+q
+);
+
+52  
+NULL
+;
+
+53 
+	}
+}
+
+56 
+	$öôTaskI2C
+()
+
+58 
+	`±hªad_¸óã
+(&
+thªad
+ ,
+NULL
+ ,
+èsk
+ ,NULL);
+
+59 
+	}
+}
+
+61 
+boﬁ
+ 
+	$èskI2C_íqueueFromI§
+(
+msg_t
+ 
+msg
+)
+
+63 
+	`LOG
+("d©a_Àngth: %zu d©a: %s\n", 
+msg
+.
+d©a_Àngth
+, msg.
+d©a
+);
+
+64  
+	`queue_íqueueFromI§
+(&
+q
+, 
+msg
+);
+
+65 
+	}
+}
+
+67 
 boﬁ
  
 	$èskI2C_íqueue
@@ -1921,7 +2719,17 @@ msg_t
 msg
 )
 
-19 
+69 
+	`LOG
+("d©a_Àngth: %zu d©a: %s\n", 
+msg
+.
+d©a_Àngth
+, msg.
+d©a
+);
+
+70  
 	`queue_íqueue
 (&
 q
@@ -1929,119 +2737,7 @@ q
 msg
 );
 
-21 
-	}
-}
-
-23 
-	$i2cEndCÆlback
-(
-boﬁ
- 
-°©us
-)
-
-25 
-i2cEndSètus
-=
-°©us
-;
-
-26 
-	`¥ötf
-("Task %†ˇŒback: %d\n", 
-__func__
-,
-°©us
-);
-
-27 
-	}
-}
-
-29 * 
-	$èskI2C
-(* 
-¨g
-)
-
-31 
-msg_t
- 
-msg
-;
-
-33 
-	`¥ötf
-("%†i†ru¬ög.\n", 
-__func__
-);
-
-34 
-	`queue_öô
-(&
-q
-);
-
-36 
-msg
- = 
-	`queue_dequeue
-(&
-q
-);
-
-37 
-	`I2C_wrôe
-(
-msg
-.
-addªss
-, msg.
-d©a
-, msg.
-d©a_Ànght
-, 
-i2cEndCÆlback
-);
-
-38 
-msg
-.
-	`ˇŒback
-(
-i2cEndSètus
-);
-
-39 
-	`¥ötf
-("I2CÑxáddªss: %u d©a_Ànght: %zu d©a: %s\n", 
-msg
-.
-addªss
-, msg.
-d©a_Ànght
-, msg.
-d©a
-);
-
-41 
-	`queue_de°roy
-(&
-q
-);
-
-42 
-	`¥ötf
-("%†i†föished.\n", 
-__func__
-);
-
-43  
-NULL
-;
-
-44 
+71 
 	}
 }
 
@@ -2057,7 +2753,21 @@ TASK_I2C_H
 
 	)
 
-4 
+4 
+öôTaskI2C
+ ( );
+
+5 
+boﬁ
+ 
+èskI2C_íqueueFromI§
+ ( 
+msg_t
+ 
+msg
+ );
+
+6 
 boﬁ
  
 èskI2C_íqueue
@@ -2065,12 +2775,6 @@ boﬁ
 msg_t
  
 msg
- );
-
-5 * 
-èskI2C
- ( * 
-¨g
  );
 
 	@/usr/include/pthread.h
@@ -46242,10 +46946,12 @@ __d
 .
 1
 /usr/include
-106
-3029
+108
+3044
+config.h
 driver_i2c.c
 driver_i2c.h
+log.h
 main.c
 queue_lib.c
 queue_lib.h

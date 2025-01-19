@@ -4,7 +4,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <errno.h>
+#include "config.h"
+#include "log.h"
+#include "timing.h"
 #include "queue_lib.h"
+
+#define MODULE    "QUEUE"
+#define LOG_COLOR  10
+#define LOG_ENABLE LOG_QUEUE_ENABLE
 
 // Initialize the queue
 void queue_init(struct queue_t *q) 
@@ -17,16 +25,22 @@ void queue_init(struct queue_t *q)
     pthread_cond_init  ( &q->not_full  ,NULL );
 }
 
-// Enqueue an element
-bool queue_enqueueFromIsr(struct queue_t *q, struct msg_t value) 
+bool queue_enqueue(struct queue_t *q, struct msg_t msg,uint32_t delayMs) 
 {
-   bool ans = false;
+   int             ret;
+   struct timespec timeout;
+   bool            ans = false;
+
    pthread_mutex_lock(&q->lock);
-
-   // Wait if the queue is full
-   if (q->count <= QUEUE_SIZE) {
-
-      q->buffer[q->rear] = value;
+   timeout = calcFuture(delayMs);
+   ret = 0;
+   while (q->count == QUEUE_SIZE && ret == 0) {
+      ret = pthread_cond_timedwait(&q->not_full, &q->lock, &timeout);
+   }
+   if (ret == ETIMEDOUT) {
+      LOG("--> timeout, drop %u - %s\r\n",msg.address, msg.data);
+   } else {
+      q->buffer[q->rear] = msg;
       q->rear = (q->rear + 1) % QUEUE_SIZE;
       q->count++;
       pthread_cond_signal(&q->not_empty);
@@ -36,43 +50,30 @@ bool queue_enqueueFromIsr(struct queue_t *q, struct msg_t value)
    return ans;
 }
 
-bool queue_enqueue(struct queue_t *q, struct msg_t value) 
-{
-   pthread_mutex_lock(&q->lock);
-
-   // Wait if the queue is full
-   while (q->count == QUEUE_SIZE) {
-      pthread_cond_wait(&q->not_full, &q->lock);
-   }
-
-   q->buffer[q->rear] = value;
-   q->rear = (q->rear + 1) % QUEUE_SIZE;
-   q->count++;
-
-   pthread_cond_signal(&q->not_empty);
-   pthread_mutex_unlock(&q->lock);
-
-   return true;
-}
-
 // Dequeue an element
-struct msg_t queue_dequeue(struct queue_t *q) 
+bool queue_dequeue(struct queue_t *q, struct msg_t* msg, uint32_t delayMs) 
 {
-    pthread_mutex_lock(&q->lock);
+   int             ret;
+   struct timespec timeout;
+   bool            ans = false;
 
-    // Wait if the queue is empty
-    while (q->count == 0) {
-        pthread_cond_wait(&q->not_empty, &q->lock);
-    }
-
-    struct msg_t msg = q->buffer[q->front];
-    q->front = (q->front + 1) % QUEUE_SIZE;
-    q->count--;
-
-    pthread_cond_signal(&q->not_full);
-    pthread_mutex_unlock(&q->lock);
-
-    return msg;
+   pthread_mutex_lock(&q->lock);
+   timeout = calcFuture(delayMs);
+   ret = 0;
+   while (q->count == 0 && ret == 0) {
+      ret = pthread_cond_timedwait(&q->not_empty, &q->lock, &timeout);
+   }
+   if (ret == ETIMEDOUT) {
+      LOG("--> timeout\r\n");
+   } else {
+      *msg = q->buffer[q->front];
+      q->front = (q->front + 1) % QUEUE_SIZE;
+      q->count--;
+      ans = true;
+      pthread_cond_signal(&q->not_full);
+   }
+   pthread_mutex_unlock(&q->lock);
+   return ans;
 }
 
 // Clean up the queue

@@ -4,53 +4,70 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include "config.h"
+#include "log.h"
 #include "queue_lib.h"
-#include "driver_i2c.h"
 #include "task_a.h"
 #include "task_b.h"
 #include "task_c.h"
 #include "task_i2c.h"
-#include "log.h"
+#include "driver_i2c.h"
 
-#define MODULE    "I2C"
-#define LOG_COLOR 7
+#define MODULE     "I2C"
+#define LOG_COLOR  7
+#define LOG_ENABLE TASK_I2C_LOG_ENABLE
 
+static pthread_t      thread;
 static struct queue_t q;
 static struct queue_t qAck;
-
-bool taskI2C_enqueueFromIsr(struct msg_t msg) 
-{
-   LOG("data_length: %zu data: %s\n",  msg.data_length, msg.data);
-   return queue_enqueueFromIsr(&q, msg);
-}
-bool taskI2C_enqueue(struct msg_t msg) 
-{
-   LOG("data_length: %zu data: %s\n",  msg.data_length, msg.data);
-   return queue_enqueue(&q, msg);
-}
 
 static void i2cEndCallback(bool status) 
 {
    struct msg_t msg = {
       .status = status,
    };
-   queue_enqueue(&qAck, msg);
+   //send the ack to taskI2C
+   LOG("status: %u\n", status);
+   queue_enqueue(&qAck, msg, MAX_QUEUE_TOUT_MS);
 }
 
-void* taskI2C(void* arg) 
+static void* task(void* arg) 
 {
     struct msg_t msg;
+    struct msg_t msgAck;
 
     LOG("%s is running.\n", __func__);
-    queue_init ( &q    );
-    queue_init ( &qAck );
+    queue_init ( &q    ); //queue to store the msg from taskA, taskB, taskC
+    queue_init ( &qAck ); //queue to store the ack from i2c driver
     while(true) {
-       msg = queue_dequeue(&q); 
+       //wait for the msg from taskA, taskB, taskC
+       queue_dequeue(&q, &msg, MAX_QUEUE_TOUT_MS); 
+       //send the msg to i2c service and wait for the ack
        I2C_write(msg.address, msg.data, msg.data_length, i2cEndCallback);
-       queue_dequeue(&qAck);
-       msg.callback(true);
+       //wait for the ack
+       queue_dequeue(&qAck, &msgAck, MAX_QUEUE_TOUT_MS);
+       //call the client callback
+       msg.callback(msgAck.status);
     }
-    queue_destroy(&q);
-    LOG("%s is finished.\n", __func__);
     return NULL;
+}
+
+//public API
+void initTaskI2C(void)
+{
+   pthread_create(&thread ,NULL ,task ,NULL);
+}
+
+bool taskI2C_enqueueNoneBlock(struct msg_t msg) 
+{
+   //just 10ms as a fake delay
+   LOG("%u - %s - %u\r\n",  msg.address, msg.data, 10);
+   return queue_enqueue(&q, msg,10);
+}
+
+// Enqueue an element in case of queue is full, wait until the queue is not full
+bool taskI2C_enqueue(struct msg_t msg) 
+{
+   LOG("%u - %s - %zu\r\n",  msg.address, msg.data, msg.data_length);
+   return queue_enqueue(&q, msg, MAX_QUEUE_TOUT_MS);
 }
