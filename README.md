@@ -17,9 +17,8 @@ CLI. I also shows the timing of each adc channel capture.
 link to the code repo: [Q1 task code](https://github.com/pslavkin/beam_trail_test/tree/main/q1)
 
 <p align="center">
-  <img src="./q1/q1_demo.gif" title="Q1 task demo">
+  <img src="./q1/q1_demo.gif" width=800 title="Q1 task demo">
 </p>
-
 
 ## Q2 - led connection options
 
@@ -248,17 +247,18 @@ SQN
     <img src="./q4/q4.jpg" width=700 title="software arquitecture">
 </p>
 
-#### demo video
+### click to see the youtube demo
 
 - This is a youtube demo video explanation of the code: 
-[Q4 task code](https://youtu.be/-dqxVugwdas)
+<a href=https://youtu.be/-dqxVugwdas><img src="./q4/q4_demo.gif" width=600 alt="Image Description"></a>
+[Q4 demo video](https://youtu.be/-dqxVugwdas)
 
 - Check the code at github: [Q4 task code](https://github.com/pslavkin/beam_trail_test/tree/main/q4)
 
-#### There is a block diagram
+#### Block diagram
 
 <p align="center">
-    <img src="./q4/block.jpg" width=500 title="block diagram porpose">
+    <img src="./q4/block.jpg" width=400 title="block diagram porpose">
 </p>
 
 #### Explanation
