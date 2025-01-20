@@ -250,7 +250,9 @@ SQN
 ### click to see the youtube demo
 
 - This is a youtube demo video explanation of the code: 
+
 <a href=https://youtu.be/-dqxVugwdas><img src="./q4/q4_demo.gif" width=600 alt="Image Description"></a>
+
 [Q4 demo video](https://youtu.be/-dqxVugwdas)
 
 - Check the code at github: [Q4 task code](https://github.com/pslavkin/beam_trail_test/tree/main/q4)
