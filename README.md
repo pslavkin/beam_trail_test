@@ -1,8 +1,18 @@
 ## Q1 - Two interfaces ADC sending data over TCP
 
-This video highlight the code implementation and at the end I compile the code
-in two variante MCU and SPI and runs the code in splitted CLI.
-I also shows the timing of each adc channel capture.
+<p align="center">
+  <img src="./q1/q1.jpg" width=600 title="Q1 task demo">
+</p>
+
+For this excercise I've implement a C code using posix pthread and makefile to
+compile the project in two diferent adc_iface variants
+
+You will find a lot of comments in the code that explain the implementation and
+the design decisions.
+
+I've also record a mute video that highlight the code implementation and at the
+end I compile the code in two variante MCU and SPI and runs the code in splitted
+CLI. I also shows the timing of each adc channel capture.
 
 link to the code repo: [Q1 task code](https://github.com/pslavkin/beam_trail_test/tree/main/q1)
 
@@ -60,30 +70,31 @@ cons:
 
 ## Q3 - C/C++ embedded questions
 
-#### A - dynamic memory in embedded 
-    One of the main reasons to avoid dynamic memory allocation in embedded
-    systems is that it's hard to predict the behavior of the system when the
-    memory is fragmented and the system is running out of memory, or 'cause a
-    memory leak. 
+#### A - dynamic memory in embedded
 
-    In real time systems, it's important to know the maximum time that a task
-    will take to execute, but with dynamic memory allocation is hard to predict
-    the time that it will take to allocate memory and it's hard to predict the
-    time that it will take to free memory.
-    
-    If you have a full static memory allocation system, you can predict the
-    maximum time that a task will take to execute, avoiding real time problems,
-    and never experience memory fragmentation.
+One of the main reasons to avoid dynamic memory allocation in embedded
+systems is that it's hard to predict the behavior of the system when the
+memory is fragmented and the system is running out of memory, or 'cause a
+memory leak. 
 
-    but some time the total memory of the system is less than the sum of all task
-    memory requirements at compile time, so you need to share the resource using
-    alloc/free memory at run-time.
+In real time systems, it's important to know the maximum time that a task
+will take to execute, but with dynamic memory allocation is hard to predict
+the time that it will take to allocate memory and it's hard to predict the
+time that it will take to free memory.
 
-    It's a good practice to use dynamic allocation only for those process that
-    doesn't need real time and let static memory for the critical parts
+If you have a full static memory allocation system, you can predict the
+maximum time that a task will take to execute, avoiding real time problems,
+and never experience memory fragmentation.
 
-    There is also other dynamic memory allocation strategies like grids that
-    reduce some of the problems
+but some time the total memory of the system is less than the sum of all task
+memory requirements at compile time, so you need to share the resource using
+alloc/free memory at run-time.
+
+It's a good practice to use dynamic allocation only for those process that
+doesn't need real time and let static memory for the critical parts
+
+There is also other dynamic memory allocation strategies like grids that
+reduce some of the problems
 
 #### B - 1's complement
 
@@ -123,7 +134,7 @@ or even better use only stdint types that are arch/compiler independent like
 ### C - null and 1's complement
 
 <p align="center">
-    <img src="./q3/q3_c.jpg" width=700 title="what does the code do">
+    <img src="./q3/q3_c.jpg" width=400 title="what does the code do">
 </p>
 
 in 32b arch (generally) sizeof(long int) is 64b (8bytes)  and sizeof(unsigned
@@ -146,7 +157,7 @@ a
 ### D - Which is faster
 
 <p align="center">
-    <img src="./q3/q3_d.jpg" width=500 title="which is faster">
+    <img src="./q3/q3_d.jpg" width=300 title="which is faster">
 </p>
 
 in C the 2D array is stored as row major, so the first element of the array is
@@ -177,7 +188,7 @@ second example also
 ### E - float print and representation
 
 <p align="center">
-    <img src="./q3/q3_e.jpg" width=500 title="floats representation">
+    <img src="./q3/q3_e.jpg" width=400 title="floats representation">
 </p>
 
 the 9/7 is casted and considered as a integer division, so it will end up in
@@ -206,7 +217,7 @@ and the so on
 
 
 <p align="center">
-    <img src="./q3/q3_f.jpg" width=700 title="floats representation">
+    <img src="./q3/q3_f.jpg" width=500 title="floats representation">
 </p>
 
 
@@ -286,4 +297,4 @@ non-blocking enqueue petition that task C can use to send and receive data
 from the I2C bus without compromise the real time of the task.
 
 
-Thansk for reading. Pablo Slavkin.-
+Thanks for reading!. Pablo Slavkin.-
