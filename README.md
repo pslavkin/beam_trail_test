@@ -51,8 +51,7 @@ cons:
 pros:
 - the logic of the sowfware will be respected
 - when the uC is blank and before the pin is configured, it's less common that a current draw from HI-Z pin through gnd
-- when uC turn pin to LOW, there is garantee a 0.0 A current draw to the led
-- when uC turn pin on it will be exactly 5.0v, so the led will draw the
+- when uC turn pin to LOW, there is generally garantee a 0.0 A current draw to the led
 - gnd is more stable than vcc, so it's less exposed to a spike in the 5v rail
   that could affect the uC
 - gnd plane is everywhere, so it's easier to connect the led to gnd than to vcc
@@ -65,7 +64,6 @@ cons:
 <p align="center">
   <img src="./q2/led_to_gnd.png" title="led to gnd option">
 </p>
-
 
 ## Q3 - C/C++ embedded questions
 
