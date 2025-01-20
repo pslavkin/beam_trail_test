@@ -21,7 +21,7 @@
 static pthread_t      thread;
 static struct queue_t q;
 
-static void i2cEndCallback(bool status) 
+static void i2cEndCallbackA(bool status) 
 {
    struct msg_t msg = {
       .status = status,
@@ -37,19 +37,29 @@ static void* task(void* arg)
 
     queue_init(&q);
     while(true) {
+       delayMs(TASK_PERIOD_MS);
        LOG("loop %u\r\n",i);
        //fill some fake data to send to i2c
        msg.address     = i;
-       msg.callback    = i2cEndCallback;
+       msg.callback    = i2cEndCallbackA;
        msg.data_length = TASK_DATA_LENGTH;
        msg.data        = (uint8_t*)MODULE;
-       // block forever
-       taskI2C_enqueue ( msg );
-       //wait for the ack
-       queue_dequeue ( &q, &msgAck, MAX_QUEUE_TOUT_MS );
-       LOG("I2C ack: %u\r\n",msgAck.status);
+       while(true) {
+          //queue_empty(&q);
+          // block forever
+          taskI2C_enqueue ( msg );
+          //wait for the ack
+          while(queue_dequeue ( &q, &msgAck, MAX_QUEUE_TOUT_MS )==false)
+             ;
+          //if status is false, take action. i.e. re-send the msg
+          LOG("I2C ack: %u\r\n",msgAck.status);
+          if(msgAck.status==false) {
+             LOG("--- Retry ---\r\n");
+             continue;
+          }
+          break;
+       }
        i++;
-       delayMs(TASK_PERIOD_MS);
     }
     return NULL;
 }

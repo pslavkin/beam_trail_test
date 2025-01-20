@@ -23,8 +23,10 @@ struct queue_t {
     pthread_cond_t  not_full;
 };
 
-void         queue_init    ( struct queue_t *q                                      );
-bool         queue_enqueue ( struct queue_t *q, struct msg_t value,uint32_t delayMs );
-bool         queue_dequeue ( struct queue_t *q, struct msg_t* msg, uint32_t delayMs );
-void         queue_destroy ( struct queue_t *q                                      );
+void queue_init         ( struct queue_t *q                                      );
+void queue_destroy      ( struct queue_t *q                                      );
+bool queue_enqueue      ( struct queue_t *q ,struct msg_t  msg ,uint32_t toutMs );
+bool queue_enqueueFront ( struct queue_t *q ,struct msg_t  msg ,uint32_t toutMs );
+bool queue_dequeue      ( struct queue_t *q ,struct msg_t* msg ,uint32_t toutMs );
+void queue_empty        ( struct queue_t *q                                      );
 #endif

@@ -1,4 +1,4 @@
-cscope 15 $HOME/test/beam_trail/q4               0000282621
+cscope 15 $HOME/test/beam_trail/q4               0000295208
 	@config.h
 
 1 #iâdeà
@@ -21,15 +21,11 @@ CONFIG_H
 
 6 
 	#TASK_A_PERIOD_MS
- 2000
-
-	)
+ 500
 
 7 
 	#TASK_A_DATA_LENGTH
- 10000
-
-	)
+ 1000
 
 8 
 	#TASK_A_LOG_ENABLE
@@ -49,15 +45,11 @@ CONFIG_H
 
 12 
 	#TASK_B_PERIOD_MS
- 1000
-
-	)
+ 50
 
 13 
 	#TASK_B_DATA_LENGTH
  10
-
-	)
 
 14 
 	#TASK_B_LOG_ENABLE
@@ -70,22 +62,20 @@ CONFIG_H
 17 
 	#TASK_C_ENABLE
  
-Œue
+çl£
 
 
 	)
 
 18 
 	#TASK_C_PERIOD_MS
- 1000
+ 100
 
 	)
 
 19 
 	#TASK_C_DATA_LENGTH
  10
-
-	)
 
 20 
 	#TASK_C_LOG_ENABLE
@@ -106,7 +96,7 @@ CONFIG_H
 23 
 	#TASK_I2C_LOG_ENABLE
  
-Œue
+çl£
 
 
 	)
@@ -116,6 +106,42 @@ CONFIG_H
  
 Œue
 
+
+	)
+
+25 
+	#TIMING_LOG_ENABLE
+ 
+çl£
+
+
+	)
+
+27 
+	#MAX_QUEUE_TOUT_MS
+ 1000000
+
+28 
+	#QUEUE_SIZE
+ 10
+
+	)
+
+29 
+	#QUEUE_MARGIN
+ 2
+
+	)
+
+31 
+	#I2C_DRIVER_ERRATA_RATE
+ 0
+
+	)
+
+32 
+	#TASK_I2C_ACK_EXCEED_TIME_MS
+ 2000
 
 	)
 
@@ -154,26 +180,30 @@ CONFIG_H
 "
 
 9 
-	~"queue_lib.h
+	~"timšg.h
 "
 
 10 
+	~"queue_lib.h
+"
+
+11 
 	~"driv”_i2c.h
 "
 
-12 
+13 
 	#MODULE
  "DRIVER_I2C"
 
 	)
 
-13 
+14 
 	#LOG_COLOR
  6
 
 	)
 
-14 
+15 
 	#LOG_ENABLE
  
 I2C_DRIVER_LOG_ENABLE
@@ -181,47 +211,93 @@ I2C_DRIVER_LOG_ENABLE
 
 	)
 
-16 
+17 
 ±h»ad_t
  
 	gth»ad
 ;
 
-17 
-msg_t
+18 
+queue_t
  
-	gmsg
+	gq
 ;
 
-20 * 
+21 * 
 	$sk
 (* 
 ¬g
 )
 
-23 
+23 
+msg_t
+ 
+msg
+;
+
+25 
 	`LOG
-("tx: % ke: %zu[mS]\r\n", 
+("running.\r\n");
+
+26 
+	`queue_š™
+ ( &
+q
+ );
+
+27 
+Œue
+) {
+
+29 
+	`queue_dequeue
+(&
+q
+, &
+msg
+, 
+MAX_QUEUE_TOUT_MS
+);
+
+31 
+	`LOG
+("tx begš: %u - % - %zu[ms]\r\n",
 msg
 .
+add»ss
+, msg.
 d©a
 , msg.
 d©a_Ëngth
 );
 
-25 
-	`u¦“p
+33 
+	`d–ayMs
 (
 msg
 .
 d©a_Ëngth
-*1000);
+);
 
-26 
+34 
 	`LOG
-("txƒnd\r\n");
+("txƒnd : %u - % - %zu[ms]\r\n",
+msg
+.
+add»ss
+, msg.
+d©a
+, msg.
+d©a_Ëngth
+);
 
-29 
+38 ifÐ
+I2C_DRIVER_ERRATA_RATE
+==0 || 
+	`¿nd
+() % I2C_DRIVER_ERRATA_RATE != 0 ) {
+
+39 
 msg
 .
 	`ÿÎback
@@ -229,15 +305,19 @@ msg
 Œue
 );
 
-30  
+42 
+	`LOG
+("I2C driverƒrrataƒrror => don't send cback\r\n");
+
+45  
 NULL
 ;
 
-31 
+46 
 	}
 }
 
-33 
+49 
 I2C_wr™e
 (
 ušt8_t
@@ -255,31 +335,47 @@ d©a_Ëngth
 boÞ
 ))
 
-35 
+51 
+msg_t
+ 
 msg
-.
+ = {
+
+52 .
 add»ss
- =‡ddress;
+ =‡ddress,
 
-36 
-msg
-.
+53 .
 d©a
- = data;
+ = data,
 
-37 
-msg
-.
+54 .
 d©a_Ëngth
- = data_length;
+ = data_length,
 
-38 
-msg
-.
+55 .
 ÿÎback
- = callback;
+ = callback,
 
-40 
+57 
+	`queue_’queue
+(&
+q
+, 
+msg
+, 
+MAX_QUEUE_TOUT_MS
+);
+
+58 
+	}
+}
+
+60 
+	$I2C_š™
+()
+
+62 
 	`±h»ad_ü—‹
 (&
 th»ad
@@ -287,11 +383,9 @@ th»ad
 NULL
  ,
 sk
- ,&
-msg
-);
+ ,NULL);
 
-41 
+63 
 	}
 }
 
@@ -308,8 +402,12 @@ DRIVER_I2C_H
 	)
 
 4 
+I2C_š™
+ ( ) ;
+
+5 
 I2C_wr™e
-(
+ ( 
 ušt8_t
  
 add»ss
@@ -321,7 +419,7 @@ size_t
 d©a_Ënght
 , (*
 ÿÎback
-)(
+ )(
 boÞ
 ));
 
@@ -376,8 +474,10 @@ tv_n£c
  / 1000000); \
 
 9 
-	`´štf
-("\033[38;5;%um" "| %08u | %10 | %25 | " 
+	`årštf
+(
+¡dout
+,"\033[38;5;%um" "| %08u | %10 | %25 | " 
 fmt
 , 
 LOG_COLOR
@@ -391,7 +491,13 @@ __func__
 __VA_ARGS__
 ); \
 
-10 }
+10 
+	`fæush
+(
+¡dout
+); \
+
+11 }
 
 	)
 
@@ -426,26 +532,30 @@ __VA_ARGS__
 "
 
 8 
-	~"queue_lib.h
+	~"timšg.h
 "
 
 9 
-	~"sk_a.h
+	~"queue_lib.h
 "
 
 10 
-	~"sk_b.h
+	~"sk_a.h
 "
 
 11 
-	~"sk_c.h
+	~"sk_b.h
 "
 
 12 
-	~"sk_i2c.h
+	~"sk_c.h
 "
 
 13 
+	~"sk_i2c.h
+"
+
+14 
 	~"log.h
 "
 
@@ -453,31 +563,31 @@ __VA_ARGS__
 	$maš
 ()
 
-18 
+19 
 	`š™TaskI2C
  ( );
 
-19 
+20 
 	`š™TaskA
  ( );
 
-20 
+21 
 	`š™TaskB
  ( );
 
-21 
+22 
 	`š™TaskC
  ( );
 
-23 
+24 
 Œue
 ) {
 
-24 
+25 
 	`¦“p
 (1);
 
-28 
+29 
 	}
 }
 
@@ -508,30 +618,38 @@ __VA_ARGS__
 >
 
 7 
+	~<”ºo.h
+>
+
+8 
 	~"cÚfig.h
 "
 
-8 
+9 
 	~"log.h
 "
 
-9 
+10 
+	~"timšg.h
+"
+
+11 
 	~"queue_lib.h
 "
 
-11 
+13 
 	#MODULE
  "QUEUE"
 
 	)
 
-12 
+14 
 	#LOG_COLOR
  10
 
 	)
 
-13 
+15 
 	#LOG_ENABLE
  
 LOG_QUEUE_ENABLE
@@ -539,7 +657,7 @@ LOG_QUEUE_ENABLE
 
 	)
 
-16 
+18 
 	$queue_š™
 (
 queue_t
@@ -547,25 +665,25 @@ queue_t
 q
 )
 
-18 
+20 
 q
 ->
 äÚt
  = 0;
 
-19 
+21 
 q
 ->
 »¬
  = 0;
 
-20 
+22 
 q
 ->
 couÁ
  = 0;
 
-21 
+23 
 	`±h»ad_mu‹x_š™
  ( &
 q
@@ -575,7 +693,7 @@ lock
 NULL
  );
 
-22 
+24 
 	`±h»ad_cÚd_š™
  ( &
 q
@@ -585,7 +703,7 @@ nÙ_em±y
 NULL
  );
 
-23 
+25 
 	`±h»ad_cÚd_š™
  ( &
 q
@@ -595,103 +713,47 @@ nÙ_fuÎ
 NULL
  );
 
-24 
+26 
 	}
 }
 
-27 
-boÞ
- 
-	$queue_’queueFromI¤
+28 
+	$queue_em±y
 (
 queue_t
  *
 q
-, 
-msg_t
- 
-v®ue
 )
 
-29 
-boÞ
+30 
+msg_t
  
-ªs
- = 
-çl£
+msg
 ;
 
-30 
-	`±h»ad_mu‹x_lock
-(&
+31 
+	`queue_dequeue
+(
 q
-->
-lock
-);
+, &
+msg
+, 0)) {
 
-33 ià(
-q
-->
-couÁ
- <ð
-QUEUE_SIZE
-) {
+32 
+	`LOG
+("em±y %u - %s\r\n",
+msg
+.
+add»ss
+, msg.
+d©a
+);
 
 35 
-q
-->
-bufãr
-[q->
-»¬
-] = 
-v®ue
-;
-
-36 
-q
-->
-»¬
- = (q->»¬ + 1è% 
-QUEUE_SIZE
-;
-
-37 
-q
-->
-couÁ
-++;
-
-38 
-	`±h»ad_cÚd_sigÇl
-(&
-q
-->
-nÙ_em±y
-);
-
-39 
-ªs
- = 
-Œue
-;
-
-41 
-	`±h»ad_mu‹x_uÆock
-(&
-q
-->
-lock
-);
-
-42  
-ªs
-;
-
-43 
 	}
 }
 
-45 
+37 
 boÞ
  
 	$queue_’queue
@@ -702,10 +764,32 @@ q
 , 
 msg_t
  
-v®ue
+msg
+,
+ušt32_t
+ 
+toutMs
 )
 
-47 
+39 
+»t
+;
+
+40 
+time¥ec
+ 
+timeout
+;
+
+41 
+boÞ
+ 
+ªs
+ = 
+çl£
+;
+
+43 
 	`±h»ad_mu‹x_lock
 (&
 q
@@ -713,43 +797,69 @@ q
 lock
 );
 
-50 
-q
-->
-couÁ
- =ð
-QUEUE_SIZE
-) {
-
-51 
-	`LOG
-("-->ƒnqueufuÎ, block: %u\r\n",
-q
-->
-couÁ
+44 
+timeout
+ = 
+	`ÿlcFutu»
+(
+toutMs
 );
 
-52 
-	`±h»ad_cÚd_wa™
+45 
+»t
+ = 0;
+
+46 
+q
+->
+couÁ
+ =ð(
+QUEUE_SIZE
+ - 
+QUEUE_MARGIN
+è&& 
+»t
+ == 0) {
+
+47 
+»t
+ = 
+	`±h»ad_cÚd_timedwa™
 (&
 q
 ->
 nÙ_fuÎ
 , &q->
 lock
+, &
+timeout
 );
 
-54 
+49 ià(
+»t
+ != 0) {
+
+50 
+	`LOG
+("-->imeout, drÝ %u - %s\r\n",
+msg
+.
+add»ss
+, msg.
+d©a
+);
+
+52 
 q
 ->
 bufãr
 [q->
 »¬
 ] = 
-v®ue
+msg
 ;
 
-55 
+53 
 q
 ->
 »¬
@@ -757,25 +867,13 @@ q
 QUEUE_SIZE
 ;
 
-56 
+54 
 q
 ->
 couÁ
 ++;
 
-57 
-	`LOG
-("-->ƒnqueud©a: % ¥aû: %u\r\n",
-v®ue
-.
-d©a
-, 
-q
-->
-couÁ
-);
-
-59 
+55 
 	`±h»ad_cÚd_sigÇl
 (&
 q
@@ -783,7 +881,13 @@ q
 nÙ_em±y
 );
 
-60 
+56 
+ªs
+ = 
+Œue
+;
+
+58 
 	`±h»ad_mu‹x_uÆock
 (&
 q
@@ -791,25 +895,51 @@ q
 lock
 );
 
-61  
-Œue
+59  
+ªs
 ;
 
-62 
+60 
 	}
 }
 
-65 
-msg_t
+62 
+boÞ
  
-	$queue_dequeue
+	$queue_’queueFrÚt
 (
 queue_t
  *
 q
+, 
+msg_t
+ 
+msg
+,
+ušt32_t
+ 
+toutMs
 )
 
-67 
+64 
+»t
+;
+
+65 
+time¥ec
+ 
+timeout
+;
+
+66 
+boÞ
+ 
+ªs
+ = 
+çl£
+;
+
+68 
 	`±h»ad_mu‹x_lock
 (&
 q
@@ -817,25 +947,197 @@ q
 lock
 );
 
-70 
+69 
+timeout
+ = 
+	`ÿlcFutu»
+(
+toutMs
+);
+
+70 
+»t
+ = 0;
+
+71 
 q
 ->
 couÁ
+ =ð
+QUEUE_SIZE
+ && 
+»t
  == 0) {
 
-71 
-	`±h»ad_cÚd_wa™
+72 
+»t
+ = 
+	`±h»ad_cÚd_timedwa™
+(&
+q
+->
+nÙ_fuÎ
+, &q->
+lock
+, &
+timeout
+);
+
+74 ià(
+»t
+ != 0) {
+
+75 
+	`LOG
+("-->imeout, drÝ %u - %s\r\n",
+msg
+.
+add»ss
+, msg.
+d©a
+);
+
+77 
+q
+->
+äÚt
+ = (q->äÚˆ- 1è% 
+QUEUE_SIZE
+;
+
+78 
+q
+->
+bufãr
+[q->
+äÚt
+] = 
+msg
+;
+
+79 
+q
+->
+couÁ
+++;
+
+80 
+	`±h»ad_cÚd_sigÇl
+(&
+q
+->
+nÙ_em±y
+);
+
+81 
+ªs
+ = 
+Œue
+;
+
+83 
+	`±h»ad_mu‹x_uÆock
+(&
+q
+->
+lock
+);
+
+84  
+ªs
+;
+
+85 
+	}
+}
+
+88 
+boÞ
+ 
+	$queue_dequeue
+(
+queue_t
+ *
+q
+, 
+msg_t
+* 
+msg
+, 
+ušt32_t
+ 
+toutMs
+)
+
+90 
+»t
+;
+
+91 
+time¥ec
+ 
+timeout
+;
+
+92 
+boÞ
+ 
+ªs
+ = 
+çl£
+;
+
+94 
+	`±h»ad_mu‹x_lock
+(&
+q
+->
+lock
+);
+
+95 
+timeout
+ = 
+	`ÿlcFutu»
+(
+toutMs
+);
+
+96 
+»t
+ = 0;
+
+97 
+q
+->
+couÁ
+ =ð0 && 
+»t
+ == 0) {
+
+98 
+»t
+ = 
+	`±h»ad_cÚd_timedwa™
 (&
 q
 ->
 nÙ_em±y
 , &q->
 lock
+, &
+timeout
 );
 
-74 
-msg_t
- 
+100 ià(
+»t
+ !=0 ) {
+
+101 
+	`LOG
+("-->imeout\r\n");
+
+103 *
 msg
  = 
 q
@@ -845,7 +1147,7 @@ bufãr
 äÚt
 ];
 
-75 
+104 
 q
 ->
 äÚt
@@ -853,25 +1155,19 @@ q
 QUEUE_SIZE
 ;
 
-76 
+105 
 q
 ->
 couÁ
 --;
 
-77 
-	`LOG
-("<-- dequeud©a: % ¥aû: %u\r\n",
-msg
-.
-d©a
- ,
-q
-->
-couÁ
-);
+106 
+ªs
+ = 
+Œue
+;
 
-79 
+107 
 	`±h»ad_cÚd_sigÇl
 (&
 q
@@ -879,7 +1175,7 @@ q
 nÙ_fuÎ
 );
 
-80 
+109 
 	`±h»ad_mu‹x_uÆock
 (&
 q
@@ -887,15 +1183,15 @@ q
 lock
 );
 
-82  
-msg
+110  
+ªs
 ;
 
-83 
+111 
 	}
 }
 
-86 
+114 
 	$queue_de¡roy
 (
 queue_t
@@ -903,7 +1199,7 @@ queue_t
 q
 )
 
-88 
+116 
 	`±h»ad_mu‹x_de¡roy
 (&
 q
@@ -911,7 +1207,7 @@ q
 lock
 );
 
-89 
+117 
 	`±h»ad_cÚd_de¡roy
 (&
 q
@@ -919,7 +1215,7 @@ q
 nÙ_em±y
 );
 
-90 
+118 
 	`±h»ad_cÚd_de¡roy
 (&
 q
@@ -927,7 +1223,7 @@ q
 nÙ_fuÎ
 );
 
-91 
+119 
 	}
 }
 
@@ -943,51 +1239,45 @@ QUEUE_LIB_H
 
 	)
 
-4 
-	#QUEUE_SIZE
- 10
-
-	)
-
-7 
+6 
 	smsg_t
  {
 
-9 
+8 
 ušt8_t
  
 	madd»ss
 ;
 
-10 
+9 
 boÞ
  
 	m¡©us
 ;
 
-12 
+11 
 ušt8_t
 * 
 	md©a
 ;
 
-13 
+12 
 size_t
  
 	md©a_Ëngth
 ;
 
-14 (*
+13 (*
 	mÿÎback
 )(
 	mboÞ
 );
 
-17 
+16 
 	squeue_t
  {
 
-18 
+17 
 msg_t
  
 	mbufãr
@@ -995,37 +1285,37 @@ msg_t
 QUEUE_SIZE
  ];
 
-19 
+18 
 	mäÚt
 ;
 
-20 
+19 
 	m»¬
 ;
 
-21 
+20 
 	mcouÁ
 ;
 
-22 
+21 
 ±h»ad_mu‹x_t
  
 	mlock
 ;
 
-23 
+22 
 ±h»ad_cÚd_t
  
 	mnÙ_em±y
 ;
 
-24 
+23 
 ±h»ad_cÚd_t
  
 	mnÙ_fuÎ
 ;
 
-27 
+26 
 queue_š™
  ( 
 queue_t
@@ -1033,21 +1323,15 @@ queue_t
 q
  );
 
-28 
-boÞ
- 
-queue_’queueFromI¤
+27 
+queue_de¡roy
  ( 
 queue_t
  *
 q
-, 
-msg_t
- 
-v®ue
  );
 
-29 
+28 
 boÞ
  
 queue_’queue
@@ -1059,20 +1343,50 @@ q
 msg_t
  
 msg
+ ,
+ušt32_t
+ 
+toutMs
  );
 
-30 
+29 
+boÞ
+ 
+queue_’queueFrÚt
+ ( 
+queue_t
+ *
+q
+ ,
 msg_t
+ 
+msg
+ ,
+ušt32_t
+ 
+toutMs
+ );
+
+30 
+boÞ
  
 queue_dequeue
  ( 
 queue_t
  *
 q
+ ,
+msg_t
+* 
+msg
+ ,
+ušt32_t
+ 
+toutMs
  );
 
 31 
-queue_de¡roy
+queue_em±y
  ( 
 queue_t
  *
@@ -1101,53 +1415,47 @@ q
 	~<uni¡d.h
 >
 
-8 
-	#QUEUE_SIZE
- 10
-
-	)
-
-12 
+10 
 	mbufãr
 [
 QUEUE_SIZE
 ];
 
-13 
+11 
 	mäÚt
 ;
 
-14 
+12 
 	m»¬
 ;
 
-15 
+13 
 	mcouÁ
 ;
 
-16 
+14 
 ±h»ad_mu‹x_t
  
 	mlock
 ;
 
-17 
+15 
 ±h»ad_cÚd_t
  
 	mnÙ_em±y
 ;
 
-18 
+16 
 ±h»ad_cÚd_t
  
 	mnÙ_fuÎ
 ;
 
-19 } 
+17 } 
 	tQueue
 ;
 
-22 
+20 
 	$š™_queue
 (
 Queue
@@ -1155,25 +1463,25 @@ Queue
 q
 ) {
 
-23 
+21 
 q
 ->
 äÚt
  = 0;
 
-24 
+22 
 q
 ->
 »¬
  = 0;
 
-25 
+23 
 q
 ->
 couÁ
  = 0;
 
-26 
+24 
 	`±h»ad_mu‹x_š™
 (&
 q
@@ -1183,7 +1491,7 @@ lock
 NULL
 );
 
-27 
+25 
 	`±h»ad_cÚd_š™
 (&
 q
@@ -1193,7 +1501,7 @@ nÙ_em±y
 NULL
 );
 
-28 
+26 
 	`±h»ad_cÚd_š™
 (&
 q
@@ -1203,11 +1511,11 @@ nÙ_fuÎ
 NULL
 );
 
-29 
+27 
 	}
 }
 
-32 
+30 
 	$’queue
 (
 Queue
@@ -1217,7 +1525,7 @@ q
 v®ue
 ) {
 
-33 
+31 
 	`±h»ad_mu‹x_lock
 (&
 q
@@ -1225,7 +1533,7 @@ q
 lock
 );
 
-36 
+34 
 q
 ->
 couÁ
@@ -1233,7 +1541,7 @@ couÁ
 QUEUE_SIZE
 ) {
 
-37 
+35 
 	`±h»ad_cÚd_wa™
 (&
 q
@@ -1243,7 +1551,7 @@ nÙ_fuÎ
 lock
 );
 
-40 
+38 
 q
 ->
 bufãr
@@ -1253,7 +1561,7 @@ bufãr
 v®ue
 ;
 
-41 
+39 
 q
 ->
 »¬
@@ -1261,13 +1569,13 @@ q
 QUEUE_SIZE
 ;
 
-42 
+40 
 q
 ->
 couÁ
 ++;
 
-44 
+42 
 	`±h»ad_cÚd_sigÇl
 (&
 q
@@ -1275,7 +1583,7 @@ q
 nÙ_em±y
 );
 
-45 
+43 
 	`±h»ad_mu‹x_uÆock
 (&
 q
@@ -1283,11 +1591,11 @@ q
 lock
 );
 
-46 
+44 
 	}
 }
 
-49 
+47 
 	$dequeue
 (
 Queue
@@ -1295,7 +1603,7 @@ Queue
 q
 ) {
 
-50 
+48 
 	`±h»ad_mu‹x_lock
 (&
 q
@@ -1303,13 +1611,13 @@ q
 lock
 );
 
-53 
+51 
 q
 ->
 couÁ
  == 0) {
 
-54 
+52 
 	`±h»ad_cÚd_wa™
 (&
 q
@@ -1319,7 +1627,7 @@ nÙ_em±y
 lock
 );
 
-57 
+55 
 v®ue
  = 
 q
@@ -1329,7 +1637,7 @@ bufãr
 äÚt
 ];
 
-58 
+56 
 q
 ->
 äÚt
@@ -1337,13 +1645,13 @@ q
 QUEUE_SIZE
 ;
 
-59 
+57 
 q
 ->
 couÁ
 --;
 
-61 
+59 
 	`±h»ad_cÚd_sigÇl
 (&
 q
@@ -1351,7 +1659,7 @@ q
 nÙ_fuÎ
 );
 
-62 
+60 
 	`±h»ad_mu‹x_uÆock
 (&
 q
@@ -1359,15 +1667,15 @@ q
 lock
 );
 
-64  
+62  
 v®ue
 ;
 
-65 
+63 
 	}
 }
 
-68 
+66 
 	$de¡roy_queue
 (
 Queue
@@ -1375,7 +1683,7 @@ Queue
 q
 ) {
 
-69 
+67 
 	`±h»ad_mu‹x_de¡roy
 (&
 q
@@ -1383,7 +1691,7 @@ q
 lock
 );
 
-70 
+68 
 	`±h»ad_cÚd_de¡roy
 (&
 q
@@ -1391,7 +1699,7 @@ q
 nÙ_em±y
 );
 
-71 
+69 
 	`±h»ad_cÚd_de¡roy
 (&
 q
@@ -1399,17 +1707,17 @@ q
 nÙ_fuÎ
 );
 
-72 
+70 
 	}
 }
 
-75 *
+73 *
 	$´oduûr
 (*
 ¬g
 ) {
 
-76 
+74 
 Queue
  *
 q
@@ -1417,17 +1725,17 @@ q
 ¬g
 ;
 
-77 
+75 
 i
  = 0; i < 20; i++) {
 
-78 
+76 
 	`´štf
 ("Produûr: Enqueušg %d\n", 
 i
 );
 
-79 
+77 
 	`’queue
 (
 q
@@ -1435,25 +1743,25 @@ q
 i
 );
 
-80 
+78 
 	`¦“p
 (1);
 
-82  
+80  
 NULL
 ;
 
-83 
+81 
 	}
 }
 
-86 *
+84 *
 	$cÚsum”
 (*
 ¬g
 ) {
 
-87 
+85 
 Queue
  *
 q
@@ -1461,11 +1769,11 @@ q
 ¬g
 ;
 
-88 
+86 
 i
  = 0; i < 20; i++) {
 
-89 
+87 
 v®ue
  = 
 	`dequeue
@@ -1473,41 +1781,41 @@ v®ue
 q
 );
 
-90 
+88 
 	`´štf
 ("CÚsum”: Dequeued %d\n", 
 v®ue
 );
 
-91 
+89 
 	`¦“p
 (2);
 
-93  
+91  
 NULL
 ;
 
-94 
+92 
 	}
 }
 
-96 
+94 
 	$maš
 () {
 
-97 
+95 
 Queue
  
 q
 ;
 
-98 
+96 
 	`š™_queue
 (&
 q
 );
 
-100 
+98 
 ±h»ad_t
  
 ´oduûr_th»ad
@@ -1515,7 +1823,7 @@ q
 cÚsum”_th»ad
 ;
 
-103 
+101 
 	`±h»ad_ü—‹
 (&
 ´oduûr_th»ad
@@ -1527,7 +1835,7 @@ NULL
 q
 );
 
-104 
+102 
 	`±h»ad_ü—‹
 (&
 cÚsum”_th»ad
@@ -1539,7 +1847,7 @@ cÚsum”
 q
 );
 
-107 
+105 
 	`±h»ad_još
 (
 ´oduûr_th»ad
@@ -1547,7 +1855,7 @@ q
 NULL
 );
 
-108 
+106 
 	`±h»ad_još
 (
 cÚsum”_th»ad
@@ -1555,13 +1863,13 @@ cÚsum”_th»ad
 NULL
 );
 
-110 
+108 
 	`de¡roy_queue
 (&
 q
 );
 
-112 
+110 
 	}
 }
 
@@ -1600,38 +1908,34 @@ q
 "
 
 9 
-	~"queue_lib.h
+	~"timšg.h
 "
 
 10 
-	~"sk_a.h
+	~"queue_lib.h
 "
 
 11 
-	~"sk_b.h
+	~"sk_a.h
 "
 
 12 
-	~"sk_c.h
-"
-
-13 
 	~"sk_i2c.h
 "
 
-15 
+14 
 	#MODULE
  "TASK_A"
 
 	)
 
-16 
+15 
 	#LOG_COLOR
  2
 
 	)
 
-17 
+16 
 	#TASK_PERIOD_MS
  
 TASK_A_PERIOD_MS
@@ -1639,7 +1943,7 @@ TASK_A_PERIOD_MS
 
 	)
 
-18 
+17 
 	#TASK_ENABLE
  
 TASK_A_ENABLE
@@ -1647,7 +1951,7 @@ TASK_A_ENABLE
 
 	)
 
-19 
+18 
 	#TASK_DATA_LENGTH
  
 TASK_A_DATA_LENGTH
@@ -1655,7 +1959,7 @@ TASK_A_DATA_LENGTH
 
 	)
 
-20 
+19 
 	#LOG_ENABLE
  
 TASK_A_LOG_ENABLE
@@ -1663,78 +1967,92 @@ TASK_A_LOG_ENABLE
 
 	)
 
-22 
+21 
 ±h»ad_t
  
 	gth»ad
 ;
 
-23 
+22 
 queue_t
  
 	gq
 ;
 
-25 
-	$i2cEndC®lback
+24 
+	$i2cEndC®lbackA
 (
 boÞ
  
 ¡©us
 )
 
-27 
+26 
 msg_t
  
 msg
  = {
 
-28 .
+27 .
 ¡©us
  = status,
 
-30 
+29 
 	`queue_’queue
 (&
 q
 , 
 msg
+, 
+MAX_QUEUE_TOUT_MS
 );
 
-31 
+30 
 	}
 }
 
-33 * 
+32 * 
 	$sk
 (* 
 ¬g
 )
 
-35 
+34 
 msg_t
  
 msg
 ;
 
-36 
+35 
 msg_t
  
 msgAck
 ;
 
-37 
+36 
 i
  = 0;
 
-39 
-	`LOG
-("running...\r\n");
-
-40 
+38 
 	`queue_š™
 (&
 q
+);
+
+39 
+Œue
+) {
+
+40 
+	`d–ayMs
+(
+TASK_PERIOD_MS
+);
+
+41 
+	`LOG
+("loÝ %u\r\n",
+i
 );
 
 43 
@@ -1750,7 +2068,7 @@ msg
 .
 ÿÎback
  = 
-i2cEndC®lback
+i2cEndC®lbackA
 ;
 
 45 
@@ -1771,21 +2089,29 @@ ušt8_t
 MODULE
 ;
 
-48 
+47 
+Œue
+) {
+
+50 
 	`skI2C_’queue
  ( 
 msg
  );
 
-50 
-msgAck
- = 
+52 
 	`queue_dequeue
  ( &
 q
- );
+, &
+msgAck
+, 
+MAX_QUEUE_TOUT_MS
+ )==
+çl£
+)
 
-51 
+55 
 	`LOG
 ("I2C‡ck: %u\r\n",
 msgAck
@@ -1793,39 +2119,39 @@ msgAck
 ¡©us
 );
 
-52 
+56 if(
+msgAck
+.
+¡©us
+==
+çl£
+) {
+
+57 
+	`LOG
+("--- Retry ---\r\n");
+
+62 
 i
 ++;
 
-53 
-	`u¦“p
-(
-TASK_PERIOD_MS
-*1000);
-
-55 
-	`queue_de¡roy
-(&
-q
-);
-
-56  
+64  
 NULL
 ;
 
-57 
+65 
 	}
 }
 
-60 
+68 
 	$š™TaskA
 ()
 
-62 if(
+70 if(
 TASK_ENABLE
 ) {
 
-63 
+71 
 	`±h»ad_ü—‹
 (&
 th»ad
@@ -1835,7 +2161,7 @@ NULL
 sk
  ,NULL);
 
-65 
+73 
 	}
 }
 
@@ -1890,11 +2216,11 @@ TASK_A_H
 "
 
 9 
-	~"queue_lib.h
+	~"timšg.h
 "
 
 10 
-	~"sk_a.h
+	~"queue_lib.h
 "
 
 11 
@@ -1902,26 +2228,22 @@ TASK_A_H
 "
 
 12 
-	~"sk_c.h
-"
-
-13 
 	~"sk_i2c.h
 "
 
-15 
+14 
 	#MODULE
  "TASK_B"
 
 	)
 
-16 
+15 
 	#LOG_COLOR
- 3
+ 13
 
 	)
 
-17 
+16 
 	#TASK_PERIOD_MS
  
 TASK_B_PERIOD_MS
@@ -1929,7 +2251,7 @@ TASK_B_PERIOD_MS
 
 	)
 
-18 
+17 
 	#TASK_ENABLE
  
 TASK_B_ENABLE
@@ -1937,7 +2259,7 @@ TASK_B_ENABLE
 
 	)
 
-19 
+18 
 	#TASK_DATA_LENGTH
  
 TASK_B_DATA_LENGTH
@@ -1945,7 +2267,7 @@ TASK_B_DATA_LENGTH
 
 	)
 
-20 
+19 
 	#LOG_ENABLE
  
 TASK_B_LOG_ENABLE
@@ -1953,19 +2275,19 @@ TASK_B_LOG_ENABLE
 
 	)
 
-22 
+21 
 ±h»ad_t
  
 	gth»ad
 ;
 
-23 
+22 
 queue_t
  
 	gq
 ;
 
-25 
+24 
 	$i2cEndC®lback
 (
 boÞ
@@ -1973,58 +2295,72 @@ boÞ
 ¡©us
 )
 
-27 
+26 
 msg_t
  
 msg
  = {
 
-28 .
+27 .
 ¡©us
  = status,
 
-30 
+29 
 	`queue_’queue
 (&
 q
 , 
 msg
+, 
+MAX_QUEUE_TOUT_MS
 );
 
-31 
+30 
 	}
 }
 
-33 * 
+32 * 
 	$sk
 (* 
 ¬g
 )
 
-35 
+34 
 msg_t
  
 msg
 ;
 
-36 
+35 
 msg_t
  
 msgAck
 ;
 
-37 
+36 
 i
  = 0;
 
-39 
-	`LOG
-("running...\r\n");
-
-40 
+38 
 	`queue_š™
 (&
 q
+);
+
+39 
+Œue
+) {
+
+40 
+	`d–ayMs
+(
+TASK_PERIOD_MS
+);
+
+41 
+	`LOG
+("loÝ %u\r\n",
+i
 );
 
 43 
@@ -2061,21 +2397,29 @@ ušt8_t
 MODULE
 ;
 
-48 
+47 
+Œue
+) {
+
+50 
 	`skI2C_’queue
  ( 
 msg
  );
 
-50 
-msgAck
- = 
+52 
 	`queue_dequeue
  ( &
 q
- );
+, &
+msgAck
+, 
+MAX_QUEUE_TOUT_MS
+ )==
+çl£
+)
 
-51 
+55 
 	`LOG
 ("I2C‡ck: %u\r\n",
 msgAck
@@ -2083,39 +2427,39 @@ msgAck
 ¡©us
 );
 
-52 
+56 if(
+msgAck
+.
+¡©us
+==
+çl£
+) {
+
+57 
+	`LOG
+("--- Retry ---\r\n");
+
+62 
 i
 ++;
 
-53 
-	`u¦“p
-(
-TASK_PERIOD_MS
-*1000);
-
-55 
-	`queue_de¡roy
-(&
-q
-);
-
-56  
+64  
 NULL
 ;
 
-57 
+65 
 	}
 }
 
-60 
+68 
 	$š™TaskB
 ()
 
-62 if(
+70 if(
 TASK_ENABLE
 ) {
 
-63 
+71 
 	`±h»ad_ü—‹
 (&
 th»ad
@@ -2125,7 +2469,7 @@ NULL
 sk
  ,NULL);
 
-65 
+73 
 	}
 }
 
@@ -2180,38 +2524,34 @@ TASK_B_H
 "
 
 9 
-	~"queue_lib.h
+	~"timšg.h
 "
 
 10 
-	~"sk_a.h
+	~"queue_lib.h
 "
 
 11 
-	~"sk_b.h
-"
-
-12 
 	~"sk_c.h
 "
 
-13 
+12 
 	~"sk_i2c.h
 "
 
-15 
+14 
 	#MODULE
  "TASK_C"
 
 	)
 
-16 
+15 
 	#LOG_COLOR
  4
 
 	)
 
-17 
+16 
 	#TASK_PERIOD_MS
  
 TASK_C_PERIOD_MS
@@ -2219,7 +2559,7 @@ TASK_C_PERIOD_MS
 
 	)
 
-18 
+17 
 	#TASK_ENABLE
  
 TASK_C_ENABLE
@@ -2227,7 +2567,7 @@ TASK_C_ENABLE
 
 	)
 
-19 
+18 
 	#TASK_DATA_LENGTH
  
 TASK_C_DATA_LENGTH
@@ -2235,7 +2575,7 @@ TASK_C_DATA_LENGTH
 
 	)
 
-20 
+19 
 	#LOG_ENABLE
  
 TASK_C_LOG_ENABLE
@@ -2243,19 +2583,31 @@ TASK_C_LOG_ENABLE
 
 	)
 
-22 
+21 
+	eskS‹_t
+ {
+
+22 
+	mTASK_STATE_TX
+,
+
+23 
+	mTASK_STATE_RX
+,
+
+26 
 ±h»ad_t
  
 	gth»ad
 ;
 
-23 
+27 
 queue_t
  
 	gq
 ;
 
-25 
+29 
 	$i2cEndC®lback
 (
 boÞ
@@ -2263,61 +2615,91 @@ boÞ
 ¡©us
 )
 
-27 
+31 
 msg_t
  
 msg
  = {
 
-28 .
+32 .
 ¡©us
  = status,
 
-30 
+34 
 	`queue_’queue
 (&
 q
 , 
 msg
+, 
+MAX_QUEUE_TOUT_MS
 );
 
-31 
+35 
 	}
 }
 
-33 * 
+37 * 
 	$sk
 (* 
 ¬g
 )
 
-35 
+39 
 msg_t
  
 msg
 ;
 
-36 
+40 
 msg_t
  
 msgAck
 ;
 
-37 
+41 
+skS‹_t
+ 
+¡©e
+ = 
+TASK_STATE_TX
+;
+
+42 
 i
  = 0;
 
-39 
-	`LOG
-("running...\r\n");
-
-40 
+44 
 	`queue_š™
 (&
 q
 );
 
-43 
+45 
+Œue
+) {
+
+46 
+	`d–ayMs
+(
+TASK_PERIOD_MS
+);
+
+47 
+	`LOG
+("loÝ %u\r\n",
+i
+);
+
+48 
+¡©e
+) {
+
+49 
+TASK_STATE_TX
+:
+
+51 
 msg
 .
 add»ss
@@ -2325,7 +2707,7 @@ add»ss
 i
 ;
 
-44 
+52 
 msg
 .
 ÿÎback
@@ -2333,7 +2715,7 @@ msg
 i2cEndC®lback
 ;
 
-45 
+53 
 msg
 .
 d©a_Ëngth
@@ -2341,7 +2723,7 @@ d©a_Ëngth
 TASK_C_DATA_LENGTH
 ;
 
-46 
+54 
 msg
 .
 d©a
@@ -2351,21 +2733,35 @@ ušt8_t
 MODULE
 ;
 
-48 ifÐ
-	`skI2C_’queueFromI¤
+56 ifÐ
+	`skI2C_’queueNÚeBlock
  ( 
 msg
  ) ) {
 
-50 
-msgAck
+57 
+¡©e
  = 
+TASK_STATE_RX
+;
+
+60 
+	`LOG
+("I2C queue is full, drophe msg\r\n");
+
+63 
+TASK_STATE_RX
+:
+
+65 ifÐ
 	`queue_dequeue
  ( &
 q
- );
+ ,&
+msgAck
+, 10)) {
 
-51 
+67 
 	`LOG
 ("I2C‡ck: %u\r\n",
 msgAck
@@ -2373,43 +2769,41 @@ msgAck
 ¡©us
 );
 
-54 
-	`LOG
-("I2C queue is full, drophe msg\r\n");
+68 
+¡©e
+ = 
+TASK_STATE_TX
+;
 
-56 
+71 
+	`LOG
+("I2Cimeouˆ»adšg, k“°Œyšg %u\r\n",
+msgAck
+.
+¡©us
+);
+
+77 
 i
 ++;
 
-57 
-	`u¦“p
-(
-TASK_PERIOD_MS
-*1000);
-
-59 
-	`queue_de¡roy
-(&
-q
-);
-
-60  
+79  
 NULL
 ;
 
-61 
+80 
 	}
 }
 
-64 
+83 
 	$š™TaskC
 ()
 
-66 if(
+85 if(
 TASK_ENABLE
 ) {
 
-67 
+86 
 	`±h»ad_ü—‹
 (&
 th»ad
@@ -2419,7 +2813,7 @@ NULL
 sk
  ,NULL);
 
-69 
+88 
 	}
 }
 
@@ -2474,42 +2868,34 @@ TASK_C_H
 "
 
 9 
-	~"queue_lib.h
+	~"timšg.h
 "
 
 10 
-	~"sk_a.h
+	~"queue_lib.h
 "
 
 11 
-	~"sk_b.h
-"
-
-12 
-	~"sk_c.h
-"
-
-13 
 	~"sk_i2c.h
 "
 
-14 
+12 
 	~"driv”_i2c.h
 "
 
-16 
+14 
 	#MODULE
  "I2C"
 
 	)
 
-17 
+15 
 	#LOG_COLOR
  7
 
 	)
 
-18 
+16 
 	#LOG_ENABLE
  
 TASK_I2C_LOG_ENABLE
@@ -2517,25 +2903,25 @@ TASK_I2C_LOG_ENABLE
 
 	)
 
-20 
+18 
 ±h»ad_t
  
 	gth»ad
 ;
 
-21 
+19 
 queue_t
  
 	gq
 ;
 
-22 
+20 
 queue_t
  
 	gqAck
 ;
 
-24 
+22 
 	$i2cEndC®lback
 (
 boÞ
@@ -2543,51 +2929,61 @@ boÞ
 ¡©us
 )
 
-26 
+24 
 msg_t
  
 msg
  = {
 
-27 .
+25 .
 ¡©us
  = status,
 
-30 
+28 
+	`LOG
+("¡©us: %u\n", 
+¡©us
+);
+
+29 
 	`queue_’queue
 (&
 qAck
 , 
 msg
+, 
+MAX_QUEUE_TOUT_MS
 );
 
-31 
+30 
 	}
 }
 
-33 * 
+32 * 
 	$sk
 (* 
 ¬g
 )
 
-35 
+34 
 msg_t
  
 msg
 ;
 
-36 
+35 
 msg_t
  
 msgAck
 ;
 
-38 
+37 
 	`LOG
-("% i ruÂšg.\n", 
-__func__
-);
+("running.\r\n");
+
+38 
+	`I2C_š™
+();
 
 39 
 	`queue_š™
@@ -2606,11 +3002,13 @@ qAck
 ) {
 
 43 
-msg
- = 
 	`queue_dequeue
 (&
 q
+, &
+msg
+, 
+MAX_QUEUE_TOUT_MS
 );
 
 45 
@@ -2627,15 +3025,29 @@ d©a_Ëngth
 i2cEndC®lback
 );
 
-47 
+50 
 msgAck
+.
+¡©us
  = 
+çl£
+;
+
+51 
 	`queue_dequeue
 (&
 qAck
+, &
+msgAck
+, 
+msg
+.
+d©a_Ëngth
+ + 
+TASK_I2C_ACK_EXCEED_TIME_MS
 );
 
-49 
+53 
 msg
 .
 	`ÿÎback
@@ -2645,25 +3057,19 @@ msgAck
 ¡©us
 );
 
-51 
-	`queue_de¡roy
-(&
-q
-);
-
-52  
+55  
 NULL
 ;
 
-53 
+56 
 	}
 }
 
-56 
+59 
 	$š™TaskI2C
 ()
 
-58 
+61 
 	`±h»ad_ü—‹
 (&
 th»ad
@@ -2673,43 +3079,51 @@ NULL
 sk
  ,NULL);
 
-59 
+62 
 	}
 }
 
-61 
+64 
 boÞ
  
-	$skI2C_’queueFromI¤
+	$skI2C_’queueNÚeBlock
 (
 msg_t
  
 msg
 )
 
-63 
+67 
 	`LOG
-("d©a_Ëngth: %zu d©a: %s\n", 
+("%u - % - %u\r\n", 
 msg
 .
-d©a_Ëngth
+add»ss
 , msg.
 d©a
-);
+, 1);
 
-64  
-	`queue_’queueFromI¤
+68  
+	`queue_’queue
 (&
 q
 , 
 msg
-);
+,1);
 
-65 
+70  
+	`queue_’queueFrÚt
+(&
+q
+, 
+msg
+,1);
+
+71 
 	}
 }
 
-67 
+74 
 boÞ
  
 	$skI2C_’queue
@@ -2719,25 +3133,29 @@ msg_t
 msg
 )
 
-69 
+76 
 	`LOG
-("d©a_Ëngth: %zu d©a: %s\n", 
+("%u - % - %zu\r\n", 
 msg
 .
-d©a_Ëngth
+add»ss
 , msg.
 d©a
+, msg.
+d©a_Ëngth
 );
 
-70  
+77  
 	`queue_’queue
 (&
 q
 , 
 msg
+, 
+MAX_QUEUE_TOUT_MS
 );
 
-71 
+78 
 	}
 }
 
@@ -2760,7 +3178,7 @@ TASK_I2C_H
 5 
 boÞ
  
-skI2C_’queueFromI¤
+skI2C_’queueNÚeBlock
  ( 
 msg_t
  
@@ -2776,6 +3194,286 @@ msg_t
  
 msg
  );
+
+	@timing.c
+
+1 
+	~<¡dio.h
+>
+
+2 
+	~<¡dšt.h
+>
+
+3 
+	~<¡dboÞ.h
+>
+
+4 
+	~<uni¡d.h
+>
+
+5 
+	~<¡dlib.h
+>
+
+6 
+	~<±h»ad.h
+>
+
+7 
+	~<sys/time.h
+>
+
+8 
+	~"cÚfig.h
+"
+
+9 
+	~"log.h
+"
+
+11 
+	#MODULE
+ "TIMING"
+
+	)
+
+12 
+	#LOG_COLOR
+ 13
+
+	)
+
+13 
+	#LOG_ENABLE
+ 
+TIMING_LOG_ENABLE
+
+
+	)
+
+15 
+	$d–ayMs
+(
+ušt32_t
+ 
+d–ayMs
+)
+
+17 
+time¥ec
+ 
+ts
+;
+
+19 
+ts
+.
+tv_£c
+ = 
+d–ayMs
+ / 1000;
+
+20 
+ts
+.
+tv_n£c
+ = (
+d–ayMs
+ % 1000) * 1000000;
+
+21 
+	`Çno¦“p
+(&
+ts
+, 
+NULL
+);
+
+22 
+	}
+}
+
+24 
+time¥ec
+ 
+	$ÿlcFutu»
+(
+ušt32_t
+ 
+d–ayMs
+)
+
+26 
+timev®
+ 
+now
+;
+
+27 
+time¥ec
+ 
+timeout
+;
+
+29 
+	`g‘timeofday
+(&
+now
+, 
+NULL
+);
+
+30 
+timeout
+.
+tv_£c
+ = 
+now
+.tv_£ø+ 
+d–ayMs
+/1000;
+
+31 
+timeout
+.
+tv_n£c
+ = 
+now
+.
+tv_u£c
+ * 1000 + (
+d–ayMs
+%1000)*1000000;
+
+33 if(
+timeout
+.
+tv_n£c
+ >= 1000000000) {
+
+34 
+timeout
+.
+tv_£c
+++;
+
+35 
+timeout
+.
+tv_n£c
+ -= 1000000000;
+
+37 
+	`LOG
+("timeout: %lu %lu\r\n",
+timeout
+.
+tv_£c
+,timeout.
+tv_n£c
+);
+
+38  
+timeout
+;
+
+39 
+	}
+}
+
+	@timing.h
+
+1 #iâdeà
+TIMING_H
+
+
+2 
+	#TIMING_H
+
+
+	)
+
+4 
+d–ayMs
+ ( 
+ušt32_t
+ delayMs );
+
+5 
+time¥ec
+ 
+ÿlcFutu»
+ ( 
+ušt32_t
+ 
+d–ayMs
+ );
+
+	@/usr/include/errno.h
+
+22 #iâdef 
+_ERRNO_H
+
+
+23 
+	#_ERRNO_H
+ 1
+
+	)
+
+25 
+	~<ã©u»s.h
+>
+
+28 
+	~<b™s/”ºo.h
+>
+
+32 #iâdeà
+__ASSEMBLER__
+
+
+34 
+__BEGIN_DECLS
+
+
+37 *
+	$__”ºo_loÿtiÚ
+ (è
+__THROW
+ 
+__©Œibu‹_cÚ¡__
+;
+
+38 
+	#”ºo
+ (*
+	`__”ºo_loÿtiÚ
+ ())
+
+	)
+
+40 #ifdeà
+__USE_GNU
+
+
+45 *
+´og¿m_švoÿtiÚ_Çme
+;
+
+46 *
+´og¿m_švoÿtiÚ_shÜt_Çme
+;
+
+48 
+	~<b™s/ty³s/”rÜ_t.h
+>
+
+52 
+__END_DECLS
+
 
 	@/usr/include/pthread.h
 
@@ -15783,6 +16481,860 @@ __LDOUBLE_REDIRECTS_TO_FLOAT128_ABI
 __END_DECLS
 
 
+	@/usr/include/sys/time.h
+
+18 #iâdeà
+_SYS_TIME_H
+
+
+19 
+	#_SYS_TIME_H
+ 1
+
+	)
+
+21 
+	~<ã©u»s.h
+>
+
+23 
+	~<b™s/ty³s.h
+>
+
+24 
+	~<b™s/ty³s/time_t.h
+>
+
+25 
+	~<b™s/ty³s/¡ruù_timev®.h
+>
+
+27 #iâdeà
+__su£cÚds_t_defšed
+
+
+28 
+__su£cÚds_t
+ 
+	tsu£cÚds_t
+;
+
+29 
+	#__su£cÚds_t_defšed
+
+
+	)
+
+32 
+	~<sys/£Ëù.h
+>
+
+34 
+	g__BEGIN_DECLS
+
+
+36 #ifdeà
+__USE_GNU
+
+
+38 
+	#TIMEVAL_TO_TIMESPEC
+(
+tv
+, 
+ts
+) { \
+
+39 (
+ts
+)->
+tv_£c
+ = (
+tv
+)->tv_sec; \
+
+40 (
+ts
+)->
+tv_n£c
+ = (
+tv
+)->
+tv_u£c
+ * 1000; \
+
+41 }
+
+	)
+
+42 
+	#TIMESPEC_TO_TIMEVAL
+(
+tv
+, 
+ts
+) { \
+
+43 (
+tv
+)->
+tv_£c
+ = (
+ts
+)->tv_sec; \
+
+44 (
+tv
+)->
+tv_u£c
+ = (
+ts
+)->
+tv_n£c
+ / 1000; \
+
+45 }
+
+	)
+
+49 #ifdeà
+__USE_MISC
+
+
+52 
+	stimezÚe
+
+
+54 
+	mtz_mšu‹swe¡
+;
+
+55 
+	mtz_d¡time
+;
+
+66 #iâdeà
+__USE_TIME64_REDIRECTS
+
+
+67 
+	$g‘timeofday
+ (
+timev®
+ *
+__»¡riù
+ 
+__tv
+,
+
+68 *
+__»¡riù
+ 
+__tz
+è
+__THROW
+ 
+	`__nÚnuÎ
+ ((1));
+
+70 #ifdeà
+__REDIRECT_NTH
+
+
+71 
+	`__REDIRECT_NTH
+ (
+g‘timeofday
+, (
+timev®
+ *
+__»¡riù
+ 
+__tv
+,
+
+72 *
+__»¡riù
+ 
+__tz
+),
+
+73 
+__g‘timeofday64
+è
+	`__nÚnuÎ
+ ((1));
+
+75 
+	#g‘timeofday
+ 
+__g‘timeofday64
+
+
+	)
+
+79 #ifdeà
+__USE_MISC
+
+
+80 #iâdeà
+__USE_TIME64_REDIRECTS
+
+
+86 
+	$£‰imeofday
+ (cÚ¡ 
+timev®
+ *
+__tv
+,
+
+87 cÚ¡ 
+timezÚe
+ *
+__tz
+)
+
+88 
+__THROW
+;
+
+94 
+	$adjtime
+ (cÚ¡ 
+timev®
+ *
+__d–
+,
+
+95 
+timev®
+ *
+__Þdd–
+è
+__THROW
+;
+
+97 #ifdeà
+__REDIRECT_NTH
+
+
+98 
+	`__REDIRECT_NTH
+ (
+£‰imeofday
+, (cÚ¡ 
+timev®
+ *
+__tv
+,
+
+99 cÚ¡ 
+timezÚe
+ *
+__tz
+),
+
+100 
+__£‰imeofday64
+);
+
+102 
+	`__REDIRECT_NTH
+ (
+adjtime
+, (cÚ¡ 
+timev®
+ *
+__d–
+,
+
+103 
+timev®
+ *
+__Þdd–
+),
+
+104 
+__adjtime64
+);
+
+106 
+	#£‰imeofday
+ 
+__£‰imeofday64
+
+
+	)
+
+107 
+	#adjtime
+ 
+__adjtime64
+
+
+	)
+
+114 
+	e__™im”_which
+
+
+117 
+ITIMER_REAL
+ = 0,
+
+118 
+	#ITIMER_REAL
+ 
+ITIMER_REAL
+
+
+	)
+
+120 
+ITIMER_VIRTUAL
+ = 1,
+
+121 
+	#ITIMER_VIRTUAL
+ 
+ITIMER_VIRTUAL
+
+
+	)
+
+124 
+ITIMER_PROF
+ = 2
+
+125 
+	#ITIMER_PROF
+ 
+ITIMER_PROF
+
+
+	)
+
+130 
+	s™im”v®
+
+
+133 
+timev®
+ 
+™_š‹rv®
+;
+
+135 
+timev®
+ 
+™_v®ue
+;
+
+138 #ià
+defšed
+ 
+__USE_GNU
+ && !defšed 
+__ýlu¥lus
+
+
+141 
+__™im”_which
+ 
+	t__™im”_which_t
+;
+
+143 
+	t__™im”_which_t
+;
+
+146 #iâdeà
+__USE_TIME64_REDIRECTS
+
+
+149 
+	$g‘™im”
+ (
+__™im”_which_t
+ 
+__which
+,
+
+150 
+™im”v®
+ *
+__v®ue
+è
+__THROW
+;
+
+155 
+	$£t™im”
+ (
+__™im”_which_t
+ 
+__which
+,
+
+156 cÚ¡ 
+™im”v®
+ *
+__»¡riù
+ 
+__Ãw
+,
+
+157 
+™im”v®
+ *
+__»¡riù
+ 
+__Þd
+è
+__THROW
+;
+
+162 
+	$utimes
+ (cÚ¡ *
+__fže
+, cÚ¡ 
+timev®
+ 
+__tvp
+[2])
+
+163 
+__THROW
+ 
+	`__nÚnuÎ
+ ((1));
+
+166 #ifdeà
+__REDIRECT_NTH
+
+
+167 
+	`__REDIRECT_NTH
+ (
+g‘™im”
+, (
+__™im”_which_t
+ 
+__which
+,
+
+168 
+™im”v®
+ *
+__v®ue
+),
+
+169 
+__g‘™im”64
+);
+
+171 
+	`__REDIRECT_NTH
+ (
+£t™im”
+, (
+__™im”_which_t
+ 
+__which
+,
+
+172 cÚ¡ 
+™im”v®
+ *
+__»¡riù
+ 
+__Ãw
+,
+
+173 
+™im”v®
+ *
+__»¡riù
+ 
+__Þd
+),
+
+174 
+__£t™im”64
+);
+
+176 
+	`__REDIRECT_NTH
+ (
+utimes
+, (cÚ¡ *
+__fže
+,
+
+177 cÚ¡ 
+timev®
+ 
+__tvp
+[2]),
+
+178 
+__utimes64
+è
+	`__nÚnuÎ
+ ((1));
+
+180 
+	#g‘™im”
+ 
+__g‘™im”64
+
+
+	)
+
+181 
+	#£t™im”
+ 
+__£t™im”64
+
+
+	)
+
+182 
+	#utimes
+ 
+__utimes64
+
+
+	)
+
+186 #ifdeà
+__USE_MISC
+
+
+187 #iâdeà
+__USE_TIME64_REDIRECTS
+
+
+189 
+	$lutimes
+ (cÚ¡ *
+__fže
+, cÚ¡ 
+timev®
+ 
+__tvp
+[2])
+
+190 
+__THROW
+ 
+	`__nÚnuÎ
+ ((1));
+
+193 
+	$futimes
+ (
+__fd
+, cÚ¡ 
+timev®
+ 
+__tvp
+[2]è
+__THROW
+;
+
+195 #ifdeà
+__REDIRECT_NTH
+
+
+196 
+	`__REDIRECT_NTH
+ (
+lutimes
+, (cÚ¡ *
+__fže
+,
+
+197 cÚ¡ 
+timev®
+ 
+__tvp
+[2]),
+
+198 
+__lutimes64
+è
+	`__nÚnuÎ
+ ((1));
+
+200 
+	`__REDIRECT_NTH
+ (
+futimes
+, (
+__fd
+, cÚ¡ 
+timev®
+ 
+__tvp
+[2]),
+
+201 
+__futimes64
+);
+
+203 
+	#lutimes
+ 
+__lutimes64
+
+
+	)
+
+204 
+	#futimes
+ 
+__futimes64
+
+
+	)
+
+209 #ifdeà
+__USE_GNU
+
+
+210 #iâdeà
+__USE_TIME64_REDIRECTS
+
+
+214 
+	$futime§t
+ (
+__fd
+, cÚ¡ *
+__fže
+,
+
+215 cÚ¡ 
+timev®
+ 
+__tvp
+[2]è
+__THROW
+;
+
+217 #ifdeà
+__REDIRECT_NTH
+
+
+218 
+	`__REDIRECT_NTH
+ (
+futime§t
+, (
+__fd
+, cÚ¡ *
+__fže
+,
+
+219 cÚ¡ 
+timev®
+ 
+__tvp
+[2]),
+
+220 
+__futime§t64
+);
+
+222 
+	#futime§t
+ 
+__futime§t64
+
+
+	)
+
+228 #ifdeà
+__USE_MISC
+
+
+231 
+	#tim”is£t
+(
+tvp
+è(Ñvp)->
+tv_£c
+ || (tvp)->
+tv_u£c
+)
+
+	)
+
+232 
+	#tim”þ—r
+(
+tvp
+è(Ñvp)->
+tv_£c
+ = (tvp)->
+tv_u£c
+ = 0)
+
+	)
+
+233 
+	#tim”cmp
+(
+a
+, 
+b
+, 
+CMP
+) \
+
+234 (((
+a
+)->
+tv_£c
+ =ð(
+b
+)->tv_sec) \
+
+235 ? ((
+a
+)->
+tv_u£c
+ 
+	`CMP
+ (
+b
+)->tv_usec) \
+
+236 : ((
+a
+)->
+tv_£c
+ 
+	`CMP
+ (
+b
+)->tv_£c))
+
+	)
+
+237 
+	#tim”add
+(
+a
+, 
+b
+, 
+»suÉ
+) \
+
+239 (
+»suÉ
+)->
+tv_£c
+ = (
+a
+)->tv_£ø+ (
+b
+)->tv_sec; \
+
+240 (
+»suÉ
+)->
+tv_u£c
+ = (
+a
+)->tv_u£ø+ (
+b
+)->tv_usec; \
+
+241 ià((
+»suÉ
+)->
+tv_u£c
+ >= 1000000) \
+
+243 ++(
+»suÉ
+)->
+tv_£c
+; \
+
+244 (
+»suÉ
+)->
+tv_u£c
+ -= 1000000; \
+
+246 
+	}
+} 0)
+
+	)
+
+247 
+	#tim”sub
+(
+a
+, 
+b
+, 
+»suÉ
+) \
+
+249 (
+»suÉ
+)->
+tv_£c
+ = (
+a
+)->tv_£ø- (
+b
+)->tv_sec; \
+
+250 (
+»suÉ
+)->
+tv_u£c
+ = (
+a
+)->tv_u£ø- (
+b
+)->tv_usec; \
+
+251 ià((
+»suÉ
+)->
+tv_u£c
+ < 0) { \
+
+252 --(
+»suÉ
+)->
+tv_£c
+; \
+
+253 (
+»suÉ
+)->
+tv_u£c
+ += 1000000; \
+
+255 } 0)
+
+	)
+
+258 
+	g__END_DECLS
+
+
 	@/usr/include/unistd.h
 
 22 #iâdef 
@@ -22838,6 +24390,90 @@ __ILP32__
 105 
 	#__LP64_OFF64_LDFLAGS
  "-m64"
+
+	)
+
+	@/usr/include/bits/errno.h
+
+19 #iâdeà
+_BITS_ERRNO_H
+
+
+20 
+	#_BITS_ERRNO_H
+ 1
+
+	)
+
+22 #ià!
+defšed
+ 
+_ERRNO_H
+
+
+26 
+	~<lšux/”ºo.h
+>
+
+29 #iâdeà
+ENOTSUP
+
+
+30 
+	#ENOTSUP
+ 
+EOPNOTSUPP
+
+
+	)
+
+33 #iâdeà
+ECANCELED
+
+
+34 
+	#ECANCELED
+ 125
+
+	)
+
+37 #iâdeà
+EOWNERDEAD
+
+
+38 
+	#EOWNERDEAD
+ 130
+
+	)
+
+41 #iâdeà
+ENOTRECOVERABLE
+
+
+42 
+	#ENOTRECOVERABLE
+ 131
+
+	)
+
+45 #iâdeà
+ERFKILL
+
+
+46 
+	#ERFKILL
+ 132
+
+	)
+
+49 #iâdeà
+EHWPOISON
+
+
+50 
+	#EHWPOISON
+ 133
 
 	)
 
@@ -30553,6 +32189,22 @@ cook›_þo£_funùiÚ_t
 	tcook›_io_funùiÚs_t
 ;
 
+	@/usr/include/bits/types/error_t.h
+
+19 #iâdeà
+__”rÜ_t_defšed
+
+
+20 
+	#__”rÜ_t_defšed
+ 1
+
+	)
+
+22 
+	t”rÜ_t
+;
+
 	@/usr/include/bits/types/locale_t.h
 
 19 #iâdeà
@@ -31007,6 +32659,86 @@ __BIG_ENDIAN
 
 27 
 	mtv_n£c
+;
+
+	@/usr/include/bits/types/struct_timeval.h
+
+1 #iâdeà
+__timev®_defšed
+
+
+2 
+	#__timev®_defšed
+ 1
+
+	)
+
+4 
+	~<b™s/ty³s.h
+>
+
+8 
+	stimev®
+
+
+10 #ifdeà
+__USE_TIME64_REDIRECTS
+
+
+11 
+__time64_t
+ 
+	mtv_£c
+;
+
+12 
+__su£cÚds64_t
+ 
+	mtv_u£c
+;
+
+14 
+__time_t
+ 
+	mtv_£c
+;
+
+15 
+__su£cÚds_t
+ 
+	mtv_u£c
+;
+
+	@/usr/include/bits/types/time_t.h
+
+1 #iâdeà
+__time_t_defšed
+
+
+2 
+	#__time_t_defšed
+ 1
+
+	)
+
+4 
+	~<b™s/ty³s.h
+>
+
+7 #ifdeà
+__USE_TIME64_REDIRECTS
+
+
+8 
+__time64_t
+ 
+	ttime_t
+;
+
+10 
+__time_t
+ 
+	ttime_t
 ;
 
 	@/usr/include/bits/unistd.h
@@ -34189,6 +35921,456 @@ __THROW
 
 138 
 __END_DECLS
+
+
+	@/usr/include/sys/select.h
+
+21 #iâdeà
+_SYS_SELECT_H
+
+
+22 
+	#_SYS_SELECT_H
+ 1
+
+	)
+
+24 
+	~<ã©u»s.h
+>
+
+27 
+	~<b™s/ty³s.h
+>
+
+30 
+	~<b™s/£Ëù.h
+>
+
+33 
+	~<b™s/ty³s/sig£t_t.h
+>
+
+36 
+	~<b™s/ty³s/time_t.h
+>
+
+37 
+	~<b™s/ty³s/¡ruù_timev®.h
+>
+
+38 #ifdeà
+__USE_XOPEN2K
+
+
+39 
+	~<b™s/ty³s/¡ruù_time¥ec.h
+>
+
+42 #iâdeà
+__su£cÚds_t_defšed
+
+
+43 
+__su£cÚds_t
+ 
+	tsu£cÚds_t
+;
+
+44 
+	#__su£cÚds_t_defšed
+
+
+	)
+
+49 
+	t__fd_mask
+;
+
+52 #undeà
+__NFDBITS
+
+
+54 
+	#__NFDBITS
+ (8 * (è (
+__fd_mask
+))
+
+	)
+
+55 
+	#__FD_ELT
+(
+d
+è((dè/ 
+__NFDBITS
+)
+
+	)
+
+56 
+	#__FD_MASK
+(
+d
+è((
+__fd_mask
+è(1UL << ((dè% 
+__NFDBITS
+)))
+
+	)
+
+63 #ifdeà
+__USE_XOPEN
+
+
+64 
+__fd_mask
+ 
+	mfds_b™s
+[
+__FD_SETSIZE
+ / 
+__NFDBITS
+];
+
+65 
+	#__FDS_BITS
+(
+£t
+è((£t)->
+fds_b™s
+)
+
+	)
+
+67 
+__fd_mask
+ 
+	m__fds_b™s
+[
+__FD_SETSIZE
+ / 
+__NFDBITS
+];
+
+68 
+	#__FDS_BITS
+(
+£t
+è((£t)->
+__fds_b™s
+)
+
+	)
+
+70 } 
+	tfd_£t
+;
+
+73 
+	#FD_SETSIZE
+ 
+__FD_SETSIZE
+
+
+	)
+
+75 #ifdeà
+__USE_MISC
+
+
+77 
+__fd_mask
+ 
+	tfd_mask
+;
+
+80 
+	#NFDBITS
+ 
+__NFDBITS
+
+
+	)
+
+85 
+	#FD_SET
+(
+fd
+, 
+fd£
+è
+	`__FD_SET
+ (fd, fd£)
+
+	)
+
+86 
+	#FD_CLR
+(
+fd
+, 
+fd£
+è
+	`__FD_CLR
+ (fd, fd£)
+
+	)
+
+87 
+	#FD_ISSET
+(
+fd
+, 
+fd£
+è
+	`__FD_ISSET
+ (fd, fd£)
+
+	)
+
+88 
+	#FD_ZERO
+(
+fd£
+è
+	`__FD_ZERO
+ (fd£)
+
+	)
+
+91 
+	g__BEGIN_DECLS
+
+
+101 #iâdeà
+__USE_TIME64_REDIRECTS
+
+
+102 
+£Ëù
+ (
+__nfds
+, 
+fd_£t
+ *
+__»¡riù
+ 
+__»adfds
+,
+
+103 
+fd_£t
+ *
+__»¡riù
+ 
+__wr™efds
+,
+
+104 
+fd_£t
+ *
+__»¡riù
+ 
+__exû±fds
+,
+
+105 
+timev®
+ *
+__»¡riù
+ 
+__timeout
+);
+
+107 #ifdeà
+__REDIRECT
+
+
+108 
+__REDIRECT
+ (
+£Ëù
+,
+
+109 (
+__nfds
+, 
+fd_£t
+ *
+__»¡riù
+ 
+__»adfds
+,
+
+110 
+fd_£t
+ *
+__»¡riù
+ 
+__wr™efds
+,
+
+111 
+fd_£t
+ *
+__»¡riù
+ 
+__exû±fds
+,
+
+112 
+timev®
+ *
+__»¡riù
+ 
+__timeout
+),
+
+113 
+__£Ëù64
+);
+
+115 
+	#£Ëù
+ 
+__£Ëù64
+
+
+	)
+
+119 #ifdeà
+__USE_XOPEN2K
+
+
+126 #iâdeà
+__USE_TIME64_REDIRECTS
+
+
+127 
+p£Ëù
+ (
+__nfds
+, 
+fd_£t
+ *
+__»¡riù
+ 
+__»adfds
+,
+
+128 
+fd_£t
+ *
+__»¡riù
+ 
+__wr™efds
+,
+
+129 
+fd_£t
+ *
+__»¡riù
+ 
+__exû±fds
+,
+
+130 cÚ¡ 
+time¥ec
+ *
+__»¡riù
+ 
+__timeout
+,
+
+131 cÚ¡ 
+__sig£t_t
+ *
+__»¡riù
+ 
+__sigmask
+);
+
+133 #ifdeà
+__REDIRECT
+
+
+134 
+__REDIRECT
+ (
+p£Ëù
+,
+
+135 (
+__nfds
+, 
+fd_£t
+ *
+__»¡riù
+ 
+__»adfds
+,
+
+136 
+fd_£t
+ *
+__»¡riù
+ 
+__wr™efds
+,
+
+137 
+fd_£t
+ *
+__»¡riù
+ 
+__exû±fds
+,
+
+138 cÚ¡ 
+time¥ec
+ *
+__»¡riù
+ 
+__timeout
+,
+
+139 cÚ¡ 
+__sig£t_t
+ *
+__»¡riù
+ 
+__sigmask
+),
+
+140 
+__p£Ëù64
+);
+
+142 
+	#p£Ëù
+ 
+__p£Ëù64
+
+
+	)
+
+149 #ià
+__USE_FORTIFY_LEVEL
+ > 0 && 
+defšed
+ 
+__GNUC__
+
+
+150 
+	~<b™s/£Ëù2.h
+>
+
+153 
+	g__END_DECLS
 
 
 	@/usr/include/sys/types.h
@@ -38283,6 +40465,178 @@ __THROW
 __END_DECLS
 
 
+	@/usr/include/bits/select.h
+
+18 #iâdeà
+_SYS_SELECT_H
+
+
+25 
+	#__FD_ZERO
+(
+s
+) \
+
+27 
+__i
+; \
+
+28 
+fd_£t
+ *
+__¬r
+ = (
+s
+); \
+
+29 
+__i
+ = 0; __˜<  (
+fd_£t
+è/  (
+__fd_mask
+); ++__i) \
+
+30 
+	`__FDS_BITS
+ (
+__¬r
+)[
+__i
+] = 0; \
+
+31 } 0)
+
+	)
+
+32 
+	#__FD_SET
+(
+d
+, 
+s
+) \
+
+33 ((è(
+	`__FDS_BITS
+ (
+s
+)[
+	`__FD_ELT
+(
+d
+)] |ð
+	`__FD_MASK
+(d)))
+
+	)
+
+34 
+	#__FD_CLR
+(
+d
+, 
+s
+) \
+
+35 ((è(
+	`__FDS_BITS
+ (
+s
+)[
+	`__FD_ELT
+(
+d
+)] &ð~
+	`__FD_MASK
+(d)))
+
+	)
+
+36 
+	#__FD_ISSET
+(
+d
+, 
+s
+) \
+
+37 ((
+	`__FDS_BITS
+ (
+s
+)[
+	`__FD_ELT
+ (
+d
+)] & 
+	`__FD_MASK
+ (d)è!ð0)
+
+	)
+
+	@/usr/include/bits/select2.h
+
+19 #iâdeà
+_SYS_SELECT_H
+
+
+23 
+	~<b™s/£Ëù-deþ.h
+>
+
+25 #undeà
+__FD_ELT
+
+
+26 
+	#__FD_ELT
+(
+d
+) \
+
+27 
+__ex‹nsiÚ__
+ \
+
+28 ({ 
+__d
+ = (
+d
+); \
+
+29 (
+	`__bužtš_cÚ¡ªt_p
+ (
+__d
+) \
+
+30 ? (0 <ð
+__d
+ && __d < 
+__FD_SETSIZE
+ \
+
+31 ? (
+__d
+ / 
+__NFDBITS
+) \
+
+32 : 
+	`__fd–t_w¬n
+ (
+__d
+)) \
+
+33 : 
+	`__fd–t_chk
+ (
+__d
+)); })
+
+	)
+
 	@/usr/include/bits/thread-shared-types.h
 
 19 #iâdeà
@@ -38803,6 +41157,28 @@ __þockid_t
 	tþockid_t
 ;
 
+	@/usr/include/bits/types/sigset_t.h
+
+1 #iâdeà
+__sig£t_t_defšed
+
+
+2 
+	#__sig£t_t_defšed
+ 1
+
+	)
+
+4 
+	~<b™s/ty³s/__sig£t_t.h
+>
+
+7 
+__sig£t_t
+ 
+	tsig£t_t
+;
+
 	@/usr/include/bits/types/struct_itimerspec.h
 
 1 #iâdeà
@@ -38913,38 +41289,6 @@ __USE_MISC
 
 24 cÚ¡ *
 	m__tm_zÚe
-;
-
-	@/usr/include/bits/types/time_t.h
-
-1 #iâdeà
-__time_t_defšed
-
-
-2 
-	#__time_t_defšed
- 1
-
-	)
-
-4 
-	~<b™s/ty³s.h
->
-
-7 #ifdeà
-__USE_TIME64_REDIRECTS
-
-
-8 
-__time64_t
- 
-	ttime_t
-;
-
-10 
-__time_t
- 
-	ttime_t
 ;
 
 	@/usr/include/bits/types/timer_t.h
@@ -40976,6 +43320,12 @@ _LINUX_CLOSE_RANGE_H
  (1U << 2)
 
 	)
+
+	@/usr/include/linux/errno.h
+
+1 
+	~<asm/”ºo.h
+>
 
 	@/usr/include/stdc-predef.h
 
@@ -44779,455 +47129,11 @@ __may_®Ÿs__
 
 	)
 
-	@/usr/include/sys/select.h
+	@/usr/include/asm/errno.h
 
-21 #iâdeà
-_SYS_SELECT_H
-
-
-22 
-	#_SYS_SELECT_H
- 1
-
-	)
-
-24 
-	~<ã©u»s.h
+1 
+	~<asm-g’”ic/”ºo.h
 >
-
-27 
-	~<b™s/ty³s.h
->
-
-30 
-	~<b™s/£Ëù.h
->
-
-33 
-	~<b™s/ty³s/sig£t_t.h
->
-
-36 
-	~<b™s/ty³s/time_t.h
->
-
-37 
-	~<b™s/ty³s/¡ruù_timev®.h
->
-
-38 #ifdeà
-__USE_XOPEN2K
-
-
-39 
-	~<b™s/ty³s/¡ruù_time¥ec.h
->
-
-42 #iâdeà
-__su£cÚds_t_defšed
-
-
-43 
-__su£cÚds_t
- 
-	tsu£cÚds_t
-;
-
-44 
-	#__su£cÚds_t_defšed
-
-
-	)
-
-49 
-	t__fd_mask
-;
-
-52 #undeà
-__NFDBITS
-
-
-54 
-	#__NFDBITS
- (8 * (è (
-__fd_mask
-))
-
-	)
-
-55 
-	#__FD_ELT
-(
-d
-è((dè/ 
-__NFDBITS
-)
-
-	)
-
-56 
-	#__FD_MASK
-(
-d
-è((
-__fd_mask
-è(1UL << ((dè% 
-__NFDBITS
-)))
-
-	)
-
-63 #ifdeà
-__USE_XOPEN
-
-
-64 
-__fd_mask
- 
-	mfds_b™s
-[
-__FD_SETSIZE
- / 
-__NFDBITS
-];
-
-65 
-	#__FDS_BITS
-(
-£t
-è((£t)->
-fds_b™s
-)
-
-	)
-
-67 
-__fd_mask
- 
-	m__fds_b™s
-[
-__FD_SETSIZE
- / 
-__NFDBITS
-];
-
-68 
-	#__FDS_BITS
-(
-£t
-è((£t)->
-__fds_b™s
-)
-
-	)
-
-70 } 
-	tfd_£t
-;
-
-73 
-	#FD_SETSIZE
- 
-__FD_SETSIZE
-
-
-	)
-
-75 #ifdeà
-__USE_MISC
-
-
-77 
-__fd_mask
- 
-	tfd_mask
-;
-
-80 
-	#NFDBITS
- 
-__NFDBITS
-
-
-	)
-
-85 
-	#FD_SET
-(
-fd
-, 
-fd£
-è
-	`__FD_SET
- (fd, fd£)
-
-	)
-
-86 
-	#FD_CLR
-(
-fd
-, 
-fd£
-è
-	`__FD_CLR
- (fd, fd£)
-
-	)
-
-87 
-	#FD_ISSET
-(
-fd
-, 
-fd£
-è
-	`__FD_ISSET
- (fd, fd£)
-
-	)
-
-88 
-	#FD_ZERO
-(
-fd£
-è
-	`__FD_ZERO
- (fd£)
-
-	)
-
-91 
-	g__BEGIN_DECLS
-
-
-101 #iâdeà
-__USE_TIME64_REDIRECTS
-
-
-102 
-£Ëù
- (
-__nfds
-, 
-fd_£t
- *
-__»¡riù
- 
-__»adfds
-,
-
-103 
-fd_£t
- *
-__»¡riù
- 
-__wr™efds
-,
-
-104 
-fd_£t
- *
-__»¡riù
- 
-__exû±fds
-,
-
-105 
-timev®
- *
-__»¡riù
- 
-__timeout
-);
-
-107 #ifdeà
-__REDIRECT
-
-
-108 
-__REDIRECT
- (
-£Ëù
-,
-
-109 (
-__nfds
-, 
-fd_£t
- *
-__»¡riù
- 
-__»adfds
-,
-
-110 
-fd_£t
- *
-__»¡riù
- 
-__wr™efds
-,
-
-111 
-fd_£t
- *
-__»¡riù
- 
-__exû±fds
-,
-
-112 
-timev®
- *
-__»¡riù
- 
-__timeout
-),
-
-113 
-__£Ëù64
-);
-
-115 
-	#£Ëù
- 
-__£Ëù64
-
-
-	)
-
-119 #ifdeà
-__USE_XOPEN2K
-
-
-126 #iâdeà
-__USE_TIME64_REDIRECTS
-
-
-127 
-p£Ëù
- (
-__nfds
-, 
-fd_£t
- *
-__»¡riù
- 
-__»adfds
-,
-
-128 
-fd_£t
- *
-__»¡riù
- 
-__wr™efds
-,
-
-129 
-fd_£t
- *
-__»¡riù
- 
-__exû±fds
-,
-
-130 cÚ¡ 
-time¥ec
- *
-__»¡riù
- 
-__timeout
-,
-
-131 cÚ¡ 
-__sig£t_t
- *
-__»¡riù
- 
-__sigmask
-);
-
-133 #ifdeà
-__REDIRECT
-
-
-134 
-__REDIRECT
- (
-p£Ëù
-,
-
-135 (
-__nfds
-, 
-fd_£t
- *
-__»¡riù
- 
-__»adfds
-,
-
-136 
-fd_£t
- *
-__»¡riù
- 
-__wr™efds
-,
-
-137 
-fd_£t
- *
-__»¡riù
- 
-__exû±fds
-,
-
-138 cÚ¡ 
-time¥ec
- *
-__»¡riù
- 
-__timeout
-,
-
-139 cÚ¡ 
-__sig£t_t
- *
-__»¡riù
- 
-__sigmask
-),
-
-140 
-__p£Ëù64
-);
-
-142 
-	#p£Ëù
- 
-__p£Ëù64
-
-
-	)
-
-149 #ià
-__USE_FORTIFY_LEVEL
- > 0 && 
-defšed
- 
-__GNUC__
-
-
-150 
-	~<b™s/£Ëù2.h
->
-
-153 
-	g__END_DECLS
-
 
 	@/usr/include/bits/atomic_wide_counter.h
 
@@ -45627,177 +47533,37 @@ __x86_64__
 
 	)
 
-	@/usr/include/bits/select.h
-
-18 #iâdeà
-_SYS_SELECT_H
-
-
-25 
-	#__FD_ZERO
-(
-s
-) \
-
-27 
-__i
-; \
-
-28 
-fd_£t
- *
-__¬r
- = (
-s
-); \
-
-29 
-__i
- = 0; __˜<  (
-fd_£t
-è/  (
-__fd_mask
-); ++__i) \
-
-30 
-	`__FDS_BITS
- (
-__¬r
-)[
-__i
-] = 0; \
-
-31 } 0)
-
-	)
-
-32 
-	#__FD_SET
-(
-d
-, 
-s
-) \
-
-33 ((è(
-	`__FDS_BITS
- (
-s
-)[
-	`__FD_ELT
-(
-d
-)] |ð
-	`__FD_MASK
-(d)))
-
-	)
-
-34 
-	#__FD_CLR
-(
-d
-, 
-s
-) \
-
-35 ((è(
-	`__FDS_BITS
- (
-s
-)[
-	`__FD_ELT
-(
-d
-)] &ð~
-	`__FD_MASK
-(d)))
-
-	)
-
-36 
-	#__FD_ISSET
-(
-d
-, 
-s
-) \
-
-37 ((
-	`__FDS_BITS
- (
-s
-)[
-	`__FD_ELT
- (
-d
-)] & 
-	`__FD_MASK
- (d)è!ð0)
-
-	)
-
-	@/usr/include/bits/select2.h
+	@/usr/include/bits/select-decl.h
 
 19 #iâdeà
+_BITS_SELECT_DECL_H
+
+
+20 
+	#_BITS_SELECT_DECL_H
+ 1
+
+	)
+
+22 #iâdeà
 _SYS_SELECT_H
 
 
-23 
-	~<b™s/£Ëù-deþ.h
->
-
-25 #undeà
-__FD_ELT
-
-
-26 
-	#__FD_ELT
-(
-d
-) \
-
-27 
-__ex‹nsiÚ__
- \
-
-28 ({ 
+27 
+__fd–t_chk
+ (
 __d
- = (
-d
-); \
+);
 
-29 (
-	`__bužtš_cÚ¡ªt_p
- (
+28 
+	$__fd–t_w¬n
+ (
 __d
-) \
+)
 
-30 ? (0 <ð
-__d
- && __d < 
-__FD_SETSIZE
- \
-
-31 ? (
-__d
- / 
-__NFDBITS
-) \
-
-32 : 
-	`__fd–t_w¬n
- (
-__d
-)) \
-
-33 : 
-	`__fd–t_chk
- (
-__d
-)); })
-
-	)
+29 
+	`__w¬Ç‰r
+ ("bit outside of fd_set selected");
 
 	@/usr/include/bits/struct_mutex.h
 
@@ -46595,28 +48361,6 @@ STA_CLK
 
 	)
 
-	@/usr/include/bits/types/sigset_t.h
-
-1 #iâdeà
-__sig£t_t_defšed
-
-
-2 
-	#__sig£t_t_defšed
- 1
-
-	)
-
-4 
-	~<b™s/ty³s/__sig£t_t.h
->
-
-7 
-__sig£t_t
- 
-	tsig£t_t
-;
-
 	@/usr/include/bits/types/struct_sched_param.h
 
 19 #iâdeà
@@ -46635,54 +48379,6 @@ _BITS_TYPES_STRUCT_SCHED_PARAM
 
 25 
 	msched_´iÜ™y
-;
-
-	@/usr/include/bits/types/struct_timeval.h
-
-1 #iâdeà
-__timev®_defšed
-
-
-2 
-	#__timev®_defšed
- 1
-
-	)
-
-4 
-	~<b™s/ty³s.h
->
-
-8 
-	stimev®
-
-
-10 #ifdeà
-__USE_TIME64_REDIRECTS
-
-
-11 
-__time64_t
- 
-	mtv_£c
-;
-
-12 
-__su£cÚds64_t
- 
-	mtv_u£c
-;
-
-14 
-__time_t
- 
-	mtv_£c
-;
-
-15 
-__su£cÚds_t
- 
-	mtv_u£c
 ;
 
 	@/usr/include/bits/uintn-identity.h
@@ -46909,45 +48605,843 @@ _LIBC
 
 	)
 
-	@/usr/include/bits/select-decl.h
+	@/usr/include/asm-generic/errno.h
 
-19 #iâdeà
-_BITS_SELECT_DECL_H
+2 #iâdeà
+_ASM_GENERIC_ERRNO_H
 
+
+3 
+	#_ASM_GENERIC_ERRNO_H
+
+
+	)
+
+5 
+	~<asm-g’”ic/”ºo-ba£.h
+>
+
+7 
+	#EDEADLK
+ 35
+
+	)
+
+8 
+	#ENAMETOOLONG
+ 36
+
+	)
+
+9 
+	#ENOLCK
+ 37
+
+	)
+
+18 
+	#ENOSYS
+ 38
+
+	)
 
 20 
-	#_BITS_SELECT_DECL_H
+	#ENOTEMPTY
+ 39
+
+	)
+
+21 
+	#ELOOP
+ 40
+
+	)
+
+22 
+	#EWOULDBLOCK
+ 
+EAGAIN
+
+
+	)
+
+23 
+	#ENOMSG
+ 42
+
+	)
+
+24 
+	#EIDRM
+ 43
+
+	)
+
+25 
+	#ECHRNG
+ 44
+
+	)
+
+26 
+	#EL2NSYNC
+ 45
+
+	)
+
+27 
+	#EL3HLT
+ 46
+
+	)
+
+28 
+	#EL3RST
+ 47
+
+	)
+
+29 
+	#ELNRNG
+ 48
+
+	)
+
+30 
+	#EUNATCH
+ 49
+
+	)
+
+31 
+	#ENOCSI
+ 50
+
+	)
+
+32 
+	#EL2HLT
+ 51
+
+	)
+
+33 
+	#EBADE
+ 52
+
+	)
+
+34 
+	#EBADR
+ 53
+
+	)
+
+35 
+	#EXFULL
+ 54
+
+	)
+
+36 
+	#ENOANO
+ 55
+
+	)
+
+37 
+	#EBADRQC
+ 56
+
+	)
+
+38 
+	#EBADSLT
+ 57
+
+	)
+
+40 
+	#EDEADLOCK
+ 
+EDEADLK
+
+
+	)
+
+42 
+	#EBFONT
+ 59
+
+	)
+
+43 
+	#ENOSTR
+ 60
+
+	)
+
+44 
+	#ENODATA
+ 61
+
+	)
+
+45 
+	#ETIME
+ 62
+
+	)
+
+46 
+	#ENOSR
+ 63
+
+	)
+
+47 
+	#ENONET
+ 64
+
+	)
+
+48 
+	#ENOPKG
+ 65
+
+	)
+
+49 
+	#EREMOTE
+ 66
+
+	)
+
+50 
+	#ENOLINK
+ 67
+
+	)
+
+51 
+	#EADV
+ 68
+
+	)
+
+52 
+	#ESRMNT
+ 69
+
+	)
+
+53 
+	#ECOMM
+ 70
+
+	)
+
+54 
+	#EPROTO
+ 71
+
+	)
+
+55 
+	#EMULTIHOP
+ 72
+
+	)
+
+56 
+	#EDOTDOT
+ 73
+
+	)
+
+57 
+	#EBADMSG
+ 74
+
+	)
+
+58 
+	#EOVERFLOW
+ 75
+
+	)
+
+59 
+	#ENOTUNIQ
+ 76
+
+	)
+
+60 
+	#EBADFD
+ 77
+
+	)
+
+61 
+	#EREMCHG
+ 78
+
+	)
+
+62 
+	#ELIBACC
+ 79
+
+	)
+
+63 
+	#ELIBBAD
+ 80
+
+	)
+
+64 
+	#ELIBSCN
+ 81
+
+	)
+
+65 
+	#ELIBMAX
+ 82
+
+	)
+
+66 
+	#ELIBEXEC
+ 83
+
+	)
+
+67 
+	#EILSEQ
+ 84
+
+	)
+
+68 
+	#ERESTART
+ 85
+
+	)
+
+69 
+	#ESTRPIPE
+ 86
+
+	)
+
+70 
+	#EUSERS
+ 87
+
+	)
+
+71 
+	#ENOTSOCK
+ 88
+
+	)
+
+72 
+	#EDESTADDRREQ
+ 89
+
+	)
+
+73 
+	#EMSGSIZE
+ 90
+
+	)
+
+74 
+	#EPROTOTYPE
+ 91
+
+	)
+
+75 
+	#ENOPROTOOPT
+ 92
+
+	)
+
+76 
+	#EPROTONOSUPPORT
+ 93
+
+	)
+
+77 
+	#ESOCKTNOSUPPORT
+ 94
+
+	)
+
+78 
+	#EOPNOTSUPP
+ 95
+
+	)
+
+79 
+	#EPFNOSUPPORT
+ 96
+
+	)
+
+80 
+	#EAFNOSUPPORT
+ 97
+
+	)
+
+81 
+	#EADDRINUSE
+ 98
+
+	)
+
+82 
+	#EADDRNOTAVAIL
+ 99
+
+	)
+
+83 
+	#ENETDOWN
+ 100
+
+	)
+
+84 
+	#ENETUNREACH
+ 101
+
+	)
+
+85 
+	#ENETRESET
+ 102
+
+	)
+
+86 
+	#ECONNABORTED
+ 103
+
+	)
+
+87 
+	#ECONNRESET
+ 104
+
+	)
+
+88 
+	#ENOBUFS
+ 105
+
+	)
+
+89 
+	#EISCONN
+ 106
+
+	)
+
+90 
+	#ENOTCONN
+ 107
+
+	)
+
+91 
+	#ESHUTDOWN
+ 108
+
+	)
+
+92 
+	#ETOOMANYREFS
+ 109
+
+	)
+
+93 
+	#ETIMEDOUT
+ 110
+
+	)
+
+94 
+	#ECONNREFUSED
+ 111
+
+	)
+
+95 
+	#EHOSTDOWN
+ 112
+
+	)
+
+96 
+	#EHOSTUNREACH
+ 113
+
+	)
+
+97 
+	#EALREADY
+ 114
+
+	)
+
+98 
+	#EINPROGRESS
+ 115
+
+	)
+
+99 
+	#ESTALE
+ 116
+
+	)
+
+100 
+	#EUCLEAN
+ 117
+
+	)
+
+101 
+	#ENOTNAM
+ 118
+
+	)
+
+102 
+	#ENAVAIL
+ 119
+
+	)
+
+103 
+	#EISNAM
+ 120
+
+	)
+
+104 
+	#EREMOTEIO
+ 121
+
+	)
+
+105 
+	#EDQUOT
+ 122
+
+	)
+
+107 
+	#ENOMEDIUM
+ 123
+
+	)
+
+108 
+	#EMEDIUMTYPE
+ 124
+
+	)
+
+109 
+	#ECANCELED
+ 125
+
+	)
+
+110 
+	#ENOKEY
+ 126
+
+	)
+
+111 
+	#EKEYEXPIRED
+ 127
+
+	)
+
+112 
+	#EKEYREVOKED
+ 128
+
+	)
+
+113 
+	#EKEYREJECTED
+ 129
+
+	)
+
+116 
+	#EOWNERDEAD
+ 130
+
+	)
+
+117 
+	#ENOTRECOVERABLE
+ 131
+
+	)
+
+119 
+	#ERFKILL
+ 132
+
+	)
+
+121 
+	#EHWPOISON
+ 133
+
+	)
+
+	@/usr/include/asm-generic/errno-base.h
+
+2 #iâdeà
+_ASM_GENERIC_ERRNO_BASE_H
+
+
+3 
+	#_ASM_GENERIC_ERRNO_BASE_H
+
+
+	)
+
+5 
+	#EPERM
  1
 
 	)
 
-22 #iâdeà
-_SYS_SELECT_H
+6 
+	#ENOENT
+ 2
 
+	)
 
-27 
-__fd–t_chk
- (
-__d
-);
+7 
+	#ESRCH
+ 3
 
-28 
-	$__fd–t_w¬n
- (
-__d
-)
+	)
 
-29 
-	`__w¬Ç‰r
- ("bit outside of fd_set selected");
+8 
+	#EINTR
+ 4
+
+	)
+
+9 
+	#EIO
+ 5
+
+	)
+
+10 
+	#ENXIO
+ 6
+
+	)
+
+11 
+	#E2BIG
+ 7
+
+	)
+
+12 
+	#ENOEXEC
+ 8
+
+	)
+
+13 
+	#EBADF
+ 9
+
+	)
+
+14 
+	#ECHILD
+ 10
+
+	)
+
+15 
+	#EAGAIN
+ 11
+
+	)
+
+16 
+	#ENOMEM
+ 12
+
+	)
+
+17 
+	#EACCES
+ 13
+
+	)
+
+18 
+	#EFAULT
+ 14
+
+	)
+
+19 
+	#ENOTBLK
+ 15
+
+	)
+
+20 
+	#EBUSY
+ 16
+
+	)
+
+21 
+	#EEXIST
+ 17
+
+	)
+
+22 
+	#EXDEV
+ 18
+
+	)
+
+23 
+	#ENODEV
+ 19
+
+	)
+
+24 
+	#ENOTDIR
+ 20
+
+	)
+
+25 
+	#EISDIR
+ 21
+
+	)
+
+26 
+	#EINVAL
+ 22
+
+	)
+
+27 
+	#ENFILE
+ 23
+
+	)
+
+28 
+	#EMFILE
+ 24
+
+	)
+
+29 
+	#ENOTTY
+ 25
+
+	)
+
+30 
+	#ETXTBSY
+ 26
+
+	)
+
+31 
+	#EFBIG
+ 27
+
+	)
+
+32 
+	#ENOSPC
+ 28
+
+	)
+
+33 
+	#ESPIPE
+ 29
+
+	)
+
+34 
+	#EROFS
+ 30
+
+	)
+
+35 
+	#EMLINK
+ 31
+
+	)
+
+36 
+	#EPIPE
+ 32
+
+	)
+
+37 
+	#EDOM
+ 33
+
+	)
+
+38 
+	#ERANGE
+ 34
+
+	)
 
 	@
 1
 .
 1
 /usr/include
-108
-3044
+118
+3290
 config.h
 driver_i2c.c
 driver_i2c.h
@@ -46964,15 +49458,20 @@ task_c.c
 task_c.h
 task_i2c.c
 task_i2c.h
+timing.c
+timing.h
+/usr/include/errno.h
 /usr/include/pthread.h
 /usr/include/stdint.h
 /usr/include/stdio.h
 /usr/include/stdlib.h
+/usr/include/sys/time.h
 /usr/include/unistd.h
 /usr/include/alloca.h
 /usr/include/bits/confname.h
 /usr/include/bits/endian.h
 /usr/include/bits/environments.h
+/usr/include/bits/errno.h
 /usr/include/bits/floatn.h
 /usr/include/bits/getopt_posix.h
 /usr/include/bits/libc-header-start.h
@@ -46999,10 +49498,13 @@ task_i2c.h
 /usr/include/bits/types/__fpos_t.h
 /usr/include/bits/types/__sigset_t.h
 /usr/include/bits/types/cookie_io_functions_t.h
+/usr/include/bits/types/error_t.h
 /usr/include/bits/types/locale_t.h
 /usr/include/bits/types/struct_FILE.h
 /usr/include/bits/types/struct___jmp_buf_tag.h
 /usr/include/bits/types/struct_timespec.h
+/usr/include/bits/types/struct_timeval.h
+/usr/include/bits/types/time_t.h
 /usr/include/bits/unistd.h
 /usr/include/bits/unistd_ext.h
 /usr/include/bits/waitflags.h
@@ -47011,6 +49513,7 @@ task_i2c.h
 /usr/include/bits/wordsize.h
 /usr/include/features.h
 /usr/include/sched.h
+/usr/include/sys/select.h
 /usr/include/sys/types.h
 /usr/include/time.h
 /usr/include/bits/cpu-set.h
@@ -47019,6 +49522,8 @@ task_i2c.h
 /usr/include/bits/getopt_core.h
 /usr/include/bits/pthread_stack_min.h
 /usr/include/bits/sched.h
+/usr/include/bits/select.h
+/usr/include/bits/select2.h
 /usr/include/bits/thread-shared-types.h
 /usr/include/bits/time.h
 /usr/include/bits/time64.h
@@ -47027,9 +49532,9 @@ task_i2c.h
 /usr/include/bits/types/__mbstate_t.h
 /usr/include/bits/types/clock_t.h
 /usr/include/bits/types/clockid_t.h
+/usr/include/bits/types/sigset_t.h
 /usr/include/bits/types/struct_itimerspec.h
 /usr/include/bits/types/struct_tm.h
-/usr/include/bits/types/time_t.h
 /usr/include/bits/types/timer_t.h
 /usr/include/bits/typesizes.h
 /usr/include/bits/unistd-decl.h
@@ -47037,22 +49542,21 @@ task_i2c.h
 /usr/include/features-time64.h
 /usr/include/gnu/stubs.h
 /usr/include/linux/close_range.h
+/usr/include/linux/errno.h
 /usr/include/stdc-predef.h
 /usr/include/sys/cdefs.h
-/usr/include/sys/select.h
+/usr/include/asm/errno.h
 /usr/include/bits/atomic_wide_counter.h
 /usr/include/bits/byteswap.h
 /usr/include/bits/long-double.h
 /usr/include/bits/pthreadtypes-arch.h
-/usr/include/bits/select.h
-/usr/include/bits/select2.h
+/usr/include/bits/select-decl.h
 /usr/include/bits/struct_mutex.h
 /usr/include/bits/struct_rwlock.h
 /usr/include/bits/timex.h
-/usr/include/bits/types/sigset_t.h
 /usr/include/bits/types/struct_sched_param.h
-/usr/include/bits/types/struct_timeval.h
 /usr/include/bits/uintn-identity.h
 /usr/include/gnu/stubs-32.h
 /usr/include/gnu/stubs-64.h
-/usr/include/bits/select-decl.h
+/usr/include/asm-generic/errno.h
+/usr/include/asm-generic/errno-base.h

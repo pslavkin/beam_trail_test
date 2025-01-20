@@ -25,19 +25,28 @@ void queue_init(struct queue_t *q)
     pthread_cond_init  ( &q->not_full  ,NULL );
 }
 
-bool queue_enqueue(struct queue_t *q, struct msg_t msg,uint32_t delayMs) 
+void queue_empty(struct queue_t *q) 
+{
+   struct msg_t msg;
+   while(queue_dequeue(q, &msg, 0)) {
+      LOG("empty %u - %s\r\n",msg.address, msg.data);
+      ;
+   }
+}
+
+bool queue_enqueue(struct queue_t *q, struct msg_t msg,uint32_t toutMs) 
 {
    int             ret;
    struct timespec timeout;
    bool            ans = false;
 
    pthread_mutex_lock(&q->lock);
-   timeout = calcFuture(delayMs);
+   timeout = calcFuture(toutMs);
    ret = 0;
-   while (q->count == QUEUE_SIZE && ret == 0) {
+   while (q->count == (QUEUE_SIZE - QUEUE_MARGIN) && ret == 0) {
       ret = pthread_cond_timedwait(&q->not_full, &q->lock, &timeout);
    }
-   if (ret == ETIMEDOUT) {
+   if (ret != 0) { //ETIMEDOUT
       LOG("--> timeout, drop %u - %s\r\n",msg.address, msg.data);
    } else {
       q->buffer[q->rear] = msg;
@@ -50,20 +59,45 @@ bool queue_enqueue(struct queue_t *q, struct msg_t msg,uint32_t delayMs)
    return ans;
 }
 
-// Dequeue an element
-bool queue_dequeue(struct queue_t *q, struct msg_t* msg, uint32_t delayMs) 
+bool queue_enqueueFront(struct queue_t *q, struct msg_t msg,uint32_t toutMs) 
 {
    int             ret;
    struct timespec timeout;
    bool            ans = false;
 
    pthread_mutex_lock(&q->lock);
-   timeout = calcFuture(delayMs);
+   timeout = calcFuture(toutMs);
+   ret = 0;
+   while (q->count == QUEUE_SIZE && ret == 0) {
+      ret = pthread_cond_timedwait(&q->not_full, &q->lock, &timeout);
+   }
+   if (ret != 0) { //ETIMEDOUT
+      LOG("--> timeout, drop %u - %s\r\n",msg.address, msg.data);
+   } else {
+      q->front = (q->front - 1) % QUEUE_SIZE;
+      q->buffer[q->front] = msg;
+      q->count++;
+      pthread_cond_signal(&q->not_empty);
+      ans = true;
+   }
+   pthread_mutex_unlock(&q->lock);
+   return ans;
+}
+
+// Dequeue an element
+bool queue_dequeue(struct queue_t *q, struct msg_t* msg, uint32_t toutMs) 
+{
+   int             ret;
+   struct timespec timeout;
+   bool            ans = false;
+
+   pthread_mutex_lock(&q->lock);
+   timeout = calcFuture(toutMs);
    ret = 0;
    while (q->count == 0 && ret == 0) {
       ret = pthread_cond_timedwait(&q->not_empty, &q->lock, &timeout);
    }
-   if (ret == ETIMEDOUT) {
+   if (ret !=0 ) { //ETIMEDOUT
       LOG("--> timeout\r\n");
    } else {
       *msg = q->buffer[q->front];

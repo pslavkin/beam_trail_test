@@ -180,8 +180,8 @@ second example also
     <img src="./q3/q3_e.jpg" width=500 title="floats representation">
 </p>
 
-the 9/7 is considered as a integer division, so it will end up in **1**
-then 1 is converted to float to be stored in x.
+the 9/7 is casted and considered as a integer division, so it will end up in
+**1** then 1 is converted to float to be stored in x.
 
 so x ends with 1.00 in IEEE 754 float representation and the printf %f format
 will print out as 1.000000
@@ -237,3 +237,53 @@ SQN
     <img src="./q4/q4.jpg" width=700 title="software arquitecture">
 </p>
 
+#### demo video
+
+- This is a youtube demo video explanation of the code: 
+[Q4 task code](https://youtu.be/-dqxVugwdas)
+
+- Check the code at github: [Q4 task code](https://github.com/pslavkin/beam_trail_test/tree/main/q4)
+
+#### There is a block diagram
+
+<p align="center">
+    <img src="./q4/block.jpg" width=500 title="block diagram porpose">
+</p>
+
+#### Explanation
+
+For this exercise I implement a fully functional C software using posix pthread
+acting as a RTOS thread.
+
+Instead of call the I2C driver directly, I've implement a resource manager or
+service that receive the task (clients) petition of I2C exchange in order and
+manage the I2C hardware using the HAL driver.
+
+When the tasks ask a I2C transaction, they actually enqueue a petition in the 
+resource manager and wait until the resource manager finish the task.
+
+The manager by itself is a thread that is always running and checking if there
+is a msg in the queue, if there is a msg, it will execute that through the I2C
+driver registerin a local callback instead of the client callback.
+
+Doing in that way, the manager also workaround the chip errata that the I2C
+hardare some times don't call the callback
+So using a I2C manager tout, if the I2C hw don't ack in some time, the manager
+can handle the error and call client callback with false as it's status.
+
+Each task should take some action in that case, but at least don't stay waiting
+forever.
+
+With this pattern I also manage this situations:
+
+- task A that take too much time the I2C can't be interrupted by task B that
+try to use the resource more often.
+So task B will write in the resource manager and wait until the resource manager
+finish the task A and then task B will take the resource.
+
+- task C is a critical task and can't block, so the I2C manager offer a
+non-blocking enqueue petition that task C can use to send and receive data
+from the I2C bus without compromise the real time of the task.
+
+
+Thansk for reading. Pablo Slavkin.-

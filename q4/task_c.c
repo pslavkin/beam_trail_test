@@ -43,6 +43,7 @@ static void* task(void* arg)
 
     queue_init(&q);
     while(true) {
+       delayMs(TASK_PERIOD_MS);
        LOG("loop %u\r\n",i);
        switch(state) {
           case TASK_STATE_TX:
@@ -51,7 +52,7 @@ static void* task(void* arg)
              msg.callback    = i2cEndCallback;
              msg.data_length = TASK_C_DATA_LENGTH;
              msg.data        = (uint8_t*)MODULE;
-             // in case queue is full, drop msg and not wait ack
+             // try to enque as LIFO, in case queue is full, drop msg and try next loop
              if( taskI2C_enqueueNoneBlock ( msg ) ) {
                 state = TASK_STATE_RX;
              }
@@ -61,16 +62,19 @@ static void* task(void* arg)
              break;
           case TASK_STATE_RX:
              //wait for the ack
-             if( queue_dequeue ( &q ,&msgAck, 100))  {
+             if( queue_dequeue ( &q ,&msgAck, 10))  {
+                //if status is false, take action. i.e. re-send the msg
                 LOG("I2C ack: %u\r\n",msgAck.status);
                 state = TASK_STATE_TX;
+             }
+             else {
+                LOG("I2C timeout reading, keep trying %u\r\n",msgAck.status);
              }
              break;
           default:
              break;
        }
        i++;
-       delayMs(TASK_PERIOD_MS);
     }
     return NULL;
 }

@@ -64,7 +64,9 @@ CC	Makefile	/^CC		= gcc$/;"	m
 CFLAGS	Makefile	/^CFLAGS	= -Wall -g$/;"	m
 CONFIG_H	config.h	/^#define CONFIG_H$/;"	d
 DRIVER_I2C_H	driver_i2c.h	/^#define DRIVER_I2C_H$/;"	d
+I2C_DRIVER_ERRATA_RATE	config.h	/^#define I2C_DRIVER_ERRATA_RATE /;"	d
 I2C_DRIVER_LOG_ENABLE	config.h	/^#define I2C_DRIVER_LOG_ENABLE /;"	d
+I2C_init	driver_i2c.c	/^void I2C_init(void)$/;"	f	typeref:typename:void
 I2C_write	driver_i2c.c	/^void I2C_write(uint8_t address, uint8_t* data, size_t data_length, void (*callback)(bool))$/;"	f	typeref:typename:void
 LDFLAGS	Makefile	/^LDFLAGS = -lm$/;"	m
 LOG	log.h	/^#define LOG(/;"	d
@@ -74,24 +76,28 @@ LOG_COLOR	task_a.c	/^#define LOG_COLOR /;"	d	file:
 LOG_COLOR	task_b.c	/^#define LOG_COLOR /;"	d	file:
 LOG_COLOR	task_c.c	/^#define LOG_COLOR /;"	d	file:
 LOG_COLOR	task_i2c.c	/^#define LOG_COLOR /;"	d	file:
+LOG_COLOR	timing.c	/^#define LOG_COLOR /;"	d	file:
 LOG_ENABLE	driver_i2c.c	/^#define LOG_ENABLE I2C_DRIVER_LOG_ENABLE$/;"	d	file:
 LOG_ENABLE	queue_lib.c	/^#define LOG_ENABLE /;"	d	file:
 LOG_ENABLE	task_a.c	/^#define LOG_ENABLE       TASK_A_LOG_ENABLE$/;"	d	file:
 LOG_ENABLE	task_b.c	/^#define LOG_ENABLE       TASK_B_LOG_ENABLE$/;"	d	file:
 LOG_ENABLE	task_c.c	/^#define LOG_ENABLE       TASK_C_LOG_ENABLE$/;"	d	file:
 LOG_ENABLE	task_i2c.c	/^#define LOG_ENABLE TASK_I2C_LOG_ENABLE$/;"	d	file:
+LOG_ENABLE	timing.c	/^#define LOG_ENABLE       TIMING_LOG_ENABLE$/;"	d	file:
 LOG_H	log.h	/^#define LOG_H$/;"	d
 LOG_QUEUE_ENABLE	config.h	/^#define LOG_QUEUE_ENABLE /;"	d
+MAX_QUEUE_TOUT_MS	config.h	/^#define MAX_QUEUE_TOUT_MS /;"	d
 MODULE	driver_i2c.c	/^#define MODULE /;"	d	file:
 MODULE	queue_lib.c	/^#define MODULE /;"	d	file:
 MODULE	task_a.c	/^#define MODULE /;"	d	file:
 MODULE	task_b.c	/^#define MODULE /;"	d	file:
 MODULE	task_c.c	/^#define MODULE /;"	d	file:
 MODULE	task_i2c.c	/^#define MODULE /;"	d	file:
+MODULE	timing.c	/^#define MODULE /;"	d	file:
 OBJ	Makefile	/^OBJ = $(SRC:.c=.o)$/;"	m
 QUEUE_LIB_H	queue_lib.h	/^#define QUEUE_LIB_H$/;"	d
-QUEUE_SIZE	queue_lib.h	/^#define QUEUE_SIZE /;"	d
-QUEUE_SIZE	queues_lib.c	/^#define QUEUE_SIZE /;"	d	file:
+QUEUE_MARGIN	config.h	/^#define QUEUE_MARGIN /;"	d
+QUEUE_SIZE	config.h	/^#define QUEUE_SIZE /;"	d
 Queue	queues_lib.c	/^} Queue;$/;"	t	typeref:struct:__anon6c52a7240108	file:
 SRC	Makefile	/^SRC = main.c \\$/;"	m
 TASK_A_DATA_LENGTH	config.h	/^#define TASK_A_DATA_LENGTH /;"	d
@@ -115,17 +121,23 @@ TASK_DATA_LENGTH	task_c.c	/^#define TASK_DATA_LENGTH /;"	d	file:
 TASK_ENABLE	task_a.c	/^#define TASK_ENABLE /;"	d	file:
 TASK_ENABLE	task_b.c	/^#define TASK_ENABLE /;"	d	file:
 TASK_ENABLE	task_c.c	/^#define TASK_ENABLE /;"	d	file:
+TASK_I2C_ACK_EXCEED_TIME_MS	config.h	/^#define TASK_I2C_ACK_EXCEED_TIME_MS /;"	d
 TASK_I2C_H	task_i2c.h	/^#define TASK_I2C_H$/;"	d
 TASK_I2C_LOG_ENABLE	config.h	/^#define TASK_I2C_LOG_ENABLE /;"	d
 TASK_PERIOD_MS	task_a.c	/^#define TASK_PERIOD_MS /;"	d	file:
 TASK_PERIOD_MS	task_b.c	/^#define TASK_PERIOD_MS /;"	d	file:
 TASK_PERIOD_MS	task_c.c	/^#define TASK_PERIOD_MS /;"	d	file:
+TASK_STATE_RX	task_c.c	/^   TASK_STATE_RX,$/;"	e	enum:taskState_t	file:
+TASK_STATE_TX	task_c.c	/^   TASK_STATE_TX,$/;"	e	enum:taskState_t	file:
+TIMING_H	timing.h	/^#define TIMING_H$/;"	d
+TIMING_LOG_ENABLE	config.h	/^#define TIMING_LOG_ENABLE /;"	d
 __anon6c52a7240108	queues_lib.c	/^typedef struct {$/;"	s	file:
 __anond58a9b36010a	queue_lib.h	/^   union {$/;"	u	struct:msg_t
 address	queue_lib.h	/^      uint8_t address;$/;"	m	union:msg_t::__anond58a9b36010a	typeref:typename:uint8_t
 all	Makefile	/^all:$/;"	t
 buffer	queue_lib.h	/^    struct          msg_t buffer[ QUEUE_SIZE ];$/;"	m	struct:queue_t	typeref:struct:msg_t[]
 buffer	queues_lib.c	/^    int buffer[QUEUE_SIZE];$/;"	m	struct:__anon6c52a7240108	typeref:typename:int[]	file:
+calcFuture	timing.c	/^struct timespec calcFuture(uint32_t delayMs)$/;"	f	typeref:struct:timespec
 callback	queue_lib.h	/^   void       (*callback)(bool);$/;"	m	struct:msg_t	typeref:typename:void (*)(bool)
 clean	Makefile	/^clean:$/;"	t
 consumer	queues_lib.c	/^void *consumer(void *arg) {$/;"	f	typeref:typename:void *
@@ -133,15 +145,16 @@ count	queue_lib.h	/^    int             count;$/;"	m	struct:queue_t	typeref:type
 count	queues_lib.c	/^    int count;$/;"	m	struct:__anon6c52a7240108	typeref:typename:int	file:
 data	queue_lib.h	/^   uint8_t*   data;$/;"	m	struct:msg_t	typeref:typename:uint8_t *
 data_length	queue_lib.h	/^   size_t     data_length;$/;"	m	struct:msg_t	typeref:typename:size_t
+delayMs	timing.c	/^void delayMs(uint32_t delayMs) $/;"	f	typeref:typename:void
 dequeue	queues_lib.c	/^int dequeue(Queue *q) {$/;"	f	typeref:typename:int
 destroy_queue	queues_lib.c	/^void destroy_queue(Queue *q) {$/;"	f	typeref:typename:void
 enqueue	queues_lib.c	/^void enqueue(Queue *q, int value) {$/;"	f	typeref:typename:void
 front	queue_lib.h	/^    int             front;$/;"	m	struct:queue_t	typeref:typename:int
 front	queues_lib.c	/^    int front;$/;"	m	struct:__anon6c52a7240108	typeref:typename:int	file:
-i2cEndCallback	task_a.c	/^static void i2cEndCallback(bool status) $/;"	f	typeref:typename:void	file:
 i2cEndCallback	task_b.c	/^static void i2cEndCallback(bool status) $/;"	f	typeref:typename:void	file:
 i2cEndCallback	task_c.c	/^static void i2cEndCallback(bool status) $/;"	f	typeref:typename:void	file:
 i2cEndCallback	task_i2c.c	/^static void i2cEndCallback(bool status) $/;"	f	typeref:typename:void	file:
+i2cEndCallbackA	task_a.c	/^static void i2cEndCallbackA(bool status) $/;"	f	typeref:typename:void	file:
 initTaskA	task_a.c	/^void initTaskA(void)$/;"	f	typeref:typename:void
 initTaskB	task_b.c	/^void initTaskB(void)$/;"	f	typeref:typename:void
 initTaskC	task_c.c	/^void initTaskC(void)$/;"	f	typeref:typename:void
@@ -151,35 +164,37 @@ lock	queue_lib.h	/^    pthread_mutex_t lock;$/;"	m	struct:queue_t	typeref:typena
 lock	queues_lib.c	/^    pthread_mutex_t lock;$/;"	m	struct:__anon6c52a7240108	typeref:typename:pthread_mutex_t	file:
 main	main.c	/^int main(void) $/;"	f	typeref:typename:int
 main	queues_lib.c	/^int main() {$/;"	f	typeref:typename:int
-msg	driver_i2c.c	/^static struct msg_t msg;$/;"	v	typeref:struct:msg_t	file:
 msg_t	queue_lib.h	/^struct msg_t {$/;"	s
 not_empty	queue_lib.h	/^    pthread_cond_t  not_empty;$/;"	m	struct:queue_t	typeref:typename:pthread_cond_t
 not_empty	queues_lib.c	/^    pthread_cond_t not_empty;$/;"	m	struct:__anon6c52a7240108	typeref:typename:pthread_cond_t	file:
 not_full	queue_lib.h	/^    pthread_cond_t  not_full;$/;"	m	struct:queue_t	typeref:typename:pthread_cond_t
 not_full	queues_lib.c	/^    pthread_cond_t not_full;$/;"	m	struct:__anon6c52a7240108	typeref:typename:pthread_cond_t	file:
 producer	queues_lib.c	/^void *producer(void *arg) {$/;"	f	typeref:typename:void *
+q	driver_i2c.c	/^static struct queue_t q;$/;"	v	typeref:struct:queue_t	file:
 q	task_a.c	/^static struct queue_t q;$/;"	v	typeref:struct:queue_t	file:
 q	task_b.c	/^static struct queue_t q;$/;"	v	typeref:struct:queue_t	file:
 q	task_c.c	/^static struct queue_t q;$/;"	v	typeref:struct:queue_t	file:
 q	task_i2c.c	/^static struct queue_t q;$/;"	v	typeref:struct:queue_t	file:
 qAck	task_i2c.c	/^static struct queue_t qAck;$/;"	v	typeref:struct:queue_t	file:
-queue_dequeue	queue_lib.c	/^struct msg_t queue_dequeue(struct queue_t *q) $/;"	f	typeref:struct:msg_t
+queue_dequeue	queue_lib.c	/^bool queue_dequeue(struct queue_t *q, struct msg_t* msg, uint32_t toutMs) $/;"	f	typeref:typename:bool
 queue_destroy	queue_lib.c	/^void queue_destroy(struct queue_t *q) $/;"	f	typeref:typename:void
-queue_enqueue	queue_lib.c	/^bool queue_enqueue(struct queue_t *q, struct msg_t value) $/;"	f	typeref:typename:bool
-queue_enqueueFromIsr	queue_lib.c	/^bool queue_enqueueFromIsr(struct queue_t *q, struct msg_t value) $/;"	f	typeref:typename:bool
+queue_empty	queue_lib.c	/^void queue_empty(struct queue_t *q) $/;"	f	typeref:typename:void
+queue_enqueue	queue_lib.c	/^bool queue_enqueue(struct queue_t *q, struct msg_t msg,uint32_t toutMs) $/;"	f	typeref:typename:bool
+queue_enqueueFront	queue_lib.c	/^bool queue_enqueueFront(struct queue_t *q, struct msg_t msg,uint32_t toutMs) $/;"	f	typeref:typename:bool
 queue_init	queue_lib.c	/^void queue_init(struct queue_t *q) $/;"	f	typeref:typename:void
 queue_t	queue_lib.h	/^struct queue_t {$/;"	s
 rear	queue_lib.h	/^    int             rear;$/;"	m	struct:queue_t	typeref:typename:int
 rear	queues_lib.c	/^    int rear;$/;"	m	struct:__anon6c52a7240108	typeref:typename:int	file:
 status	queue_lib.h	/^      bool    status;$/;"	m	union:msg_t::__anond58a9b36010a	typeref:typename:bool
-task	driver_i2c.c	/^void* task(void* arg) $/;"	f	typeref:typename:void *
+task	driver_i2c.c	/^static void* task(void* arg) $/;"	f	typeref:typename:void *	file:
 task	task_a.c	/^static void* task(void* arg) $/;"	f	typeref:typename:void *	file:
 task	task_b.c	/^static void* task(void* arg) $/;"	f	typeref:typename:void *	file:
 task	task_c.c	/^static void* task(void* arg) $/;"	f	typeref:typename:void *	file:
 task	task_i2c.c	/^static void* task(void* arg) $/;"	f	typeref:typename:void *	file:
 taskI2C_enqueue	task_i2c.c	/^bool taskI2C_enqueue(struct msg_t msg) $/;"	f	typeref:typename:bool
-taskI2C_enqueueFromIsr	task_i2c.c	/^bool taskI2C_enqueueFromIsr(struct msg_t msg) $/;"	f	typeref:typename:bool
-thread	driver_i2c.c	/^static pthread_t    thread;$/;"	v	typeref:typename:pthread_t	file:
+taskI2C_enqueueNoneBlock	task_i2c.c	/^bool taskI2C_enqueueNoneBlock(struct msg_t msg) $/;"	f	typeref:typename:bool
+taskState_t	task_c.c	/^enum taskState_t {$/;"	g	file:
+thread	driver_i2c.c	/^static pthread_t      thread;$/;"	v	typeref:typename:pthread_t	file:
 thread	task_a.c	/^static pthread_t      thread;$/;"	v	typeref:typename:pthread_t	file:
 thread	task_b.c	/^static pthread_t      thread;$/;"	v	typeref:typename:pthread_t	file:
 thread	task_c.c	/^static pthread_t      thread;$/;"	v	typeref:typename:pthread_t	file:
